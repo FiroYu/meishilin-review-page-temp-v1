@@ -907,13 +907,8 @@
       renderPills();
       const list = filteredRestaurants();
       $("#restaurant-list").innerHTML = list.length ? list.map(restaurantCard).join("") : `<div class="empty">${tr("empty")}</div>`;
-      $$("#restaurant-list .restaurant").forEach(card => card.onclick = event => {
-        const start = event.target.closest("[data-start-review]");
-        if (start) {
-          openDecision(start.dataset.startReview);
-          return;
-        }
-        openDecision(card.dataset.id);
+      $$("#restaurant-list [data-start-review]").forEach(button => {
+        button.onclick = () => openDecision(button.dataset.startReview);
       });
       const s = stats();
       $("#progress-label").textContent = `${tr("nominations")} ${s.nominations} | ${tr("reviewed")} ${s.reviewed}`;
@@ -952,8 +947,8 @@
       const status = !review ? `<span class="tag">${tr("pending")}</span>` :
         review.status === "AGREED" ? `<span class="tag teal">${tr("agreed")}</span>` :
         `<span class="tag blue">${tr("adjusted")} → ${ratingText[state.lang][review.target]}</span>`;
-      const action = `<button class="secondary rest-action" data-start-review="${r.id}">${tr("startReview")}</button>`;
-      return `<div class="restaurant" data-id="${r.id}" role="button" tabindex="0">
+      const action = `<button type="button" class="secondary rest-action" data-start-review="${r.id}">${tr("startReview")}</button>`;
+      return `<article class="restaurant" data-id="${r.id}">
         <div class="thumb">${r.nameZh.slice(0,1)}</div>
         <div class="rest-body">
           <div class="rest-title"><strong>${html(state.lang === "zh" ? r.nameZh : r.nameEn)}</strong></div>
@@ -961,7 +956,7 @@
           <div class="tag-row"><span class="tag gold">${ratingText[state.lang][r.rating]}</span>${status}</div>
         </div>
         ${action}
-      </div>`;
+      </article>`;
     }
 
     function openDecision(id) {
@@ -981,15 +976,15 @@
       const targets = ratings.filter(x => x !== r.rating).concat("REMOVED");
       $("#decision-body").innerHTML = `
         <div class="seg">
-          <button class="choice ${d.status === "AGREED" ? "active" : ""}" data-decision="AGREED"><strong>${tr("keep")}</strong><span>${ratingText[state.lang][r.rating]}</span></button>
-          <button class="choice ${d.status === "ADJUSTED" ? "active" : ""}" data-decision="ADJUSTED"><strong>${tr("adjust")}</strong><span>${tr("reason")}</span></button>
+          <button type="button" class="choice ${d.status === "AGREED" ? "active" : ""}" data-decision="AGREED"><strong>${tr("keep")}</strong><span>${ratingText[state.lang][r.rating]}</span></button>
+          <button type="button" class="choice ${d.status === "ADJUSTED" ? "active" : ""}" data-decision="ADJUSTED"><strong>${tr("adjust")}</strong><span>${tr("reason")}</span></button>
         </div>
         <div id="adjust-area" style="${d.status === "ADJUSTED" ? "" : "display:none"};display:${d.status === "ADJUSTED" ? "grid" : "none"};gap:14px;">
           <div class="field"><label>${tr("target")}</label><select id="decision-target"><option value="">--</option>${targets.map(x => `<option value="${x}">${ratingText[state.lang][x]}</option>`).join("")}</select></div>
           <div class="field"><label>${tr("reason")}</label><textarea id="decision-reason" rows="4">${html(d.reason)}</textarea></div>
           <div class="checklist" id="decision-check"></div>
         </div>
-        <button class="primary" id="save-decision" disabled>${tr("saveDecision")}</button>`;
+        <button type="button" class="primary" id="save-decision" disabled>${tr("saveDecision")}</button>`;
       $$("#decision-body [data-decision]").forEach(b => b.onclick = () => { state.decision.status = b.dataset.decision; renderDecision(); });
       const target = $("#decision-target");
       const reason = $("#decision-reason");
