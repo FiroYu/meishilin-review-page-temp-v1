@@ -6,6 +6,7 @@
   <title>2027 携程美食林理事终审投票页</title>
   <style>
     :root {
+      --app-height: 100vh;
       --paper: #fbfaf7;
       --paper-2: #f2eee6;
       --ink: #171717;
@@ -21,8 +22,10 @@
     }
 
     * { box-sizing: border-box; }
-    html, body { margin: 0; width: 100%; min-height: 100%; background: var(--paper); color: var(--ink); }
+    html, body { margin: 0; width: 100%; height: var(--app-height); min-height: 100%; background: var(--paper); color: var(--ink); }
     body {
+      position: fixed;
+      inset: 0;
       overflow: hidden;
       background: var(--paper);
     }
@@ -32,8 +35,7 @@
 
     .device {
       width: min(430px, 100vw);
-      height: 100vh;
-      height: 100dvh;
+      height: var(--app-height);
       min-height: 0;
       margin: 0 auto;
       border: 0;
@@ -42,32 +44,6 @@
       box-shadow: none;
       overflow: hidden;
       position: relative;
-    }
-    .island {
-      display: none;
-      position: absolute;
-      top: 11px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 118px;
-      height: 31px;
-      border-radius: 999px;
-      background: #020202;
-      z-index: 40;
-    }
-    .status {
-      display: none;
-      height: 48px;
-      padding: 17px 24px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      font-weight: 700;
-      background: rgba(251, 250, 247, .92);
-      border-bottom: 1px solid rgba(217, 209, 195, .7);
-      position: relative;
-      z-index: 20;
     }
     .app {
       height: 100%;
@@ -559,19 +535,15 @@
     @media (max-width: 520px) {
       .device {
         width: 100vw;
-        height: 100vh;
-        height: 100dvh;
+        height: var(--app-height);
         min-height: 0;
       }
-      .island { display: none; }
       .bottom-bar { grid-template-columns: 88px 1fr 110px; }
     }
   </style>
 </head>
 <body>
   <main class="device" aria-label="2027 携程美食林理事终审投票页">
-    <div class="island" aria-hidden="true"></div>
-    <div class="status"><span id="clock">09:41</span><span>5G · 100%</span></div>
     <div class="toast" id="toast"></div>
     <section class="app">
       <div class="stage gateway active" id="stage-login">
@@ -842,7 +814,12 @@
     const html = value => String(value).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 
     function init() {
-      setInterval(updateClock, 10000); updateClock();
+      syncViewportHeight();
+      window.addEventListener("resize", syncViewportHeight);
+      window.addEventListener("orientationchange", () => setTimeout(syncViewportHeight, 120));
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", syncViewportHeight);
+      }
       $("#lang-login").onclick = $("#lang-board").onclick = toggleLang;
       $("#expert-name").addEventListener("input", validateLogin);
       $$(".choice[data-role]").forEach(btn => btn.onclick = () => { state.role = btn.dataset.role; validateLogin(); renderRoles(); });
@@ -863,9 +840,9 @@
       render();
     }
 
-    function updateClock() {
-      const d = new Date();
-      $("#clock").textContent = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+    function syncViewportHeight() {
+      const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      document.documentElement.style.setProperty("--app-height", `${Math.round(viewportHeight)}px`);
     }
 
     function toggleLang() {
