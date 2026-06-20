@@ -176,6 +176,8 @@
   }
   .rest-action:hover { background: #e5e7eb; }
   .rest-action:active { transform: scale(.97); }
+  .rest-action.is-done { background: #fff; color: #6b7280; border-color: #e5e7eb; font-weight: 600; }
+  .rest-action.is-done:hover { background: #f9fafb; }
   .empty { border: 1px dashed #d1d5db; background: #ffffff; padding: 30px 16px; text-align: center; color: #6b7280; font-size: 13px; border-radius: 12px; display: grid; gap: 8px; justify-items: center; }
 
   .bottom-bar {
@@ -533,7 +535,7 @@
       searchPh: "搜索商户、菜系、城市", allRatings: "全部评级",
       pillAll: "全部", pillPending: "待审", pillAgreed: "已保持", pillAdjusted: "已调整",
       addNomination: "增补", progress: "当前站点统计", submitBoard: "提交结果",
-      pending: "待评审", agreed: "已保持", adjusted: "已调整", reviewed: "已评审", startReview: "开始评审",
+      pending: "待评审", agreed: "已保持", adjusted: "已调整", reviewed: "已评审", startReview: "开始评审", editReview: "查看 / 修改",
       keep: "保持现有评级", adjust: "建议调整评级", reason: "评定依据", target: "选择目标评级",
       saveDecision: "保存评审意见", decisionSaved: "评审意见已保存", decisionRevoked: "已撤销该餐厅评审",
       cityKicker: "评审站点", cityTitle: "选择评审站点", citySearchPh: "输入北京 / Kyoto / China",
@@ -566,17 +568,17 @@
       roleBoard: "Council Member", roleBoardSub: "Council seat", roleConsultant: "Invited Consultant", roleConsultantSub: "Consultant seat",
       enter: "Start Review",
       boardKicker: "Trip.Gourmet 2027 Review", boardTitle: "Pending Restaurants",
-      currentCity: "Station", switchCity: "Switch City",
+      currentCity: "City", switchCity: "Switch City",
       searchPh: "Search by name, cuisine, city", allRatings: "All ratings",
       pillAll: "All", pillPending: "Pending", pillAgreed: "Kept", pillAdjusted: "Adjusted",
-      addNomination: "Nominate", progress: "Station stats", submitBoard: "Submit Results",
-      pending: "Pending", agreed: "Kept", adjusted: "Adjusted", reviewed: "Reviewed", startReview: "Start Review",
-      keep: "Keep current rating", adjust: "Suggest adjustment", reason: "Review basis", target: "Target rating",
+      addNomination: "Nominate", progress: "City stats", submitBoard: "Submit Results",
+      pending: "Pending", agreed: "Kept", adjusted: "Adjusted", reviewed: "Reviewed", startReview: "Start Review", editReview: "View / Edit",
+      keep: "Retain current rating", adjust: "Suggest adjustment", reason: "Rationale", target: "Target rating",
       saveDecision: "Save Review", decisionSaved: "Review saved", decisionRevoked: "Review revoked",
-      cityKicker: "Review station", cityTitle: "Select a station", citySearchPh: "Beijing / Kyoto / China",
+      cityKicker: "Review city", cityTitle: "Select a city", citySearchPh: "Beijing / Kyoto / China",
       addKicker: "Nomination", addTitle: "Nominate a Restaurant", addName: "Name", addNamePh: "Full name",
       addCountry: "Country", addCountryPh: "e.g. Japan", addCity: "City", addCityPh: "e.g. Kyoto",
-      addReason: "Review basis (min 15 chars)", addReasonPh: "Reason for the rating adjustment.",
+      addReason: "Rationale (min 15 chars)", addReasonPh: "Reason for the rating adjustment.",
       checklistName: "Name, country and city filled", saveNom: "Save Nomination", savedNoms: "Saved nominations",
       nomSaved: "Nomination saved", nomDeleted: "Nomination revoked", revoke: "Revoke",
       confirmKicker: "Review Confirmation", confirmTitle: "Pre-submission Review", confirmSub: "Review your opinions. Add overall comments if any.",
@@ -588,9 +590,9 @@
       certKicker: "Submission Complete", certTitle: "Submission Complete",
       copyReceipt: "Copy Receipt", reset: "Simulate Next Reviewer",
       submittedToast: "Review submitted.",
-      receiptExpert: "Reviewer", receiptRole: "Seat", receiptStation: "Station",
+      receiptExpert: "Reviewer", receiptRole: "Seat", receiptStation: "City",
       receiptReviewed: "Reviewed", receiptKeep: "Kept", receiptAdjust: "Adjusted", receiptNom: "Nominations",
-      receiptTime: "Submitted at", receiptOpinion: "Comments", receiptCode: "Receipt No.",
+      receiptTime: "Submitted at", receiptOpinion: "Comments", receiptCode: "Reference No.",
       roleZh: { BOARD_MEMBER: "Council Member", CONSULTANT: "Invited Consultant" },
       thanksNote: "Thank you for joining the 2027 Trip.Gourmet review. Your input is recorded and will inform the final list.",
       empty: "No pending restaurants.", nameShort: "Name needs 2+ characters", roleRequired: "Select a seat",
@@ -712,7 +714,7 @@
         <p class="meta">${html(cuisine)} · ${avg} ¥${r.price}</p>
         <div class="tag-row"><span class="tag-rating">${ratingText[state.lang][r.rating]}</span>${status}</div>
       </div>
-      <button type="button" class="rest-action" data-start-review="${r.id}">${tr("startReview")}</button>
+      <button type="button" class="rest-action ${review ? "is-done" : ""}" data-start-review="${r.id}">${review ? tr("editReview") : tr("startReview")}</button>
     </article>`;
   }
 
@@ -734,8 +736,21 @@
     $("#submit-board").disabled = !(hasReview || hasNom);
   }
 
+  function draftKey(id) { return "msl_draft_" + id; }
+  function saveDraft() {
+    const d = state.decision;
+    try { sessionStorage.setItem(draftKey(d.restaurantId), JSON.stringify({ status: d.status, target: d.target, reason: d.reason })); } catch (e) {}
+  }
+  function loadDraft(id) {
+    try { const s = sessionStorage.getItem(draftKey(id)); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+  }
+  function clearDraft(id) {
+    try { sessionStorage.removeItem(draftKey(id)); } catch (e) {}
+  }
+
   function openDecision(id) {
-    state.decision = { restaurantId: id, status: "AGREED", target: "", reason: "" };
+    const src = loadDraft(id) || state.reviews[id];
+    state.decision = src ? { restaurantId: id, status: src.status, target: src.target, reason: src.reason } : { restaurantId: id, status: "AGREED", target: "", reason: "" };
     const r = restaurants.find(item => item.id === id);
     $("#desk-rating").textContent = ratingText[state.lang][r.rating];
     $("#desk-name").textContent = state.lang === "zh" ? r.nameZh : r.nameEn;
@@ -762,11 +777,11 @@
         <div class="checklist" id="decision-check"></div>
       </div>
       <button type="button" class="primary" id="save-decision" disabled>${tr("saveDecision")}</button>`;
-    $$("#decision-body [data-decision]").forEach(b => b.onclick = () => { state.decision.status = b.dataset.decision; renderDecision(); });
+    $$("#decision-body [data-decision]").forEach(b => b.onclick = () => { state.decision.status = b.dataset.decision; saveDraft(); renderDecision(); });
     const target = $("#decision-target");
     const reason = $("#decision-reason");
-    if (target) { target.value = d.target; target.onchange = e => { state.decision.target = e.target.value; validateDecision(); }; }
-    if (reason) { reason.oninput = e => { state.decision.reason = e.target.value; validateDecision(); }; }
+    if (target) { target.value = d.target; target.onchange = e => { state.decision.target = e.target.value; saveDraft(); validateDecision(); }; }
+    if (reason) { reason.oninput = e => { state.decision.reason = e.target.value; saveDraft(); validateDecision(); }; }
     $("#save-decision").onclick = saveDecision;
     validateDecision();
     if (window.lucide) lucide.createIcons();
@@ -791,6 +806,7 @@
   function saveDecision() {
     const d = state.decision;
     if (d.status === "ADJUSTED" && (!d.target || d.reason.trim().length < 15)) return;
+    clearDraft(d.restaurantId);
     state.reviews[d.restaurantId] = {
       id: d.restaurantId, status: d.status,
       target: d.status === "AGREED" ? restaurants.find(r => r.id === d.restaurantId).rating : d.target,
