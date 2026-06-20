@@ -166,7 +166,11 @@
   .rest-title .rest-addr { font-size: 11px; color: #9ca3af; font-weight: 400; line-height: 1.35; word-break: break-word; min-width: 0; }
   .meta { font-size: 11px; color: #6b7280; line-height: 1.35; }
   .tag-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-  .tag, .tag-rating { padding: 4px 8px; font-size: 10px; font-weight: 600; color: #4b5563; border-radius: 4px; background: #f3f4f6; }
+  .tag { padding: 4px 8px; font-size: 10px; font-weight: 600; color: #4b5563; border-radius: 4px; background: #f3f4f6; }
+  .tag-rating { padding: 4px 8px; font-size: 10px; font-weight: 700; border-radius: 4px; display: inline-flex; align-items: center; }
+  .tag-rating.r-black { background: #111827; color: #fff; }
+  .tag-rating.r-diamond { background: #9ca3af; color: #fff; }
+  .tag-rating.r-platinum { background: #fff; color: #6b7280; border: 1px solid #d1d5db; }
   .tag-active { padding: 4px 8px; font-size: 10px; font-weight: 700; color: #fff; border-radius: 4px; background: #111827; }
   .tag-outline { padding: 3px 7px; font-size: 10px; font-weight: 600; color: #4b5563; border-radius: 4px; border: 1px solid #d1d5db; background: transparent; }
   .rest-action {
@@ -698,6 +702,10 @@
     }).sort((a, b) => ratings.indexOf(a.rating) - ratings.indexOf(b.rating));
   }
 
+  function ratingClass(rating) {
+    return rating === "BLACK_DIAMOND" ? "r-black" : rating === "DIAMOND" ? "r-diamond" : rating === "PLATINUM" ? "r-platinum" : "";
+  }
+
   function restaurantCard(r) {
     const review = state.reviews[r.id];
     const status = !review ? `<span class="tag">${tr("pending")}</span>`
@@ -712,7 +720,7 @@
       <div class="rest-body">
         <div class="rest-title"><strong>${html(name)}</strong>${addrHtml}</div>
         <p class="meta">${html(cuisine)} · ${avg} ¥${r.price}</p>
-        <div class="tag-row"><span class="tag-rating">${ratingText[state.lang][r.rating]}</span>${status}</div>
+        <div class="tag-row"><span class="tag-rating ${ratingClass(r.rating)}">${ratingText[state.lang][r.rating]}</span>${status}</div>
       </div>
       <button type="button" class="rest-action ${review ? "is-done" : ""}" data-start-review="${r.id}">${review ? tr("editReview") : tr("startReview")}</button>
     </article>`;
