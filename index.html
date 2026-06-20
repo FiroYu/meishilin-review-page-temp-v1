@@ -325,7 +325,7 @@
       <div class="form-surface">
         <div class="field underline">
           <label for="expert-name" data-i18n="nameLabel">评审专家姓名</label>
-          <input id="expert-name" autocomplete="name" placeholder="请输入真实姓名 / 拼音">
+          <input id="expert-name" autocomplete="name" data-i18n-ph="namePh" placeholder="请输入真实姓名 / 拼音">
         </div>
         <div class="field">
           <label data-i18n="roleLabel">选择评审席位</label>
@@ -533,7 +533,7 @@
       searchPh: "搜索商户、菜系、城市", allRatings: "全部评级",
       pillAll: "全部", pillPending: "待审", pillAgreed: "已保持", pillAdjusted: "已调整",
       addNomination: "增补", progress: "当前站点统计", submitBoard: "提交结果",
-      pending: "待评审", agreed: "已保持", adjusted: "已调整", startReview: "开始评审",
+      pending: "待评审", agreed: "已保持", adjusted: "已调整", reviewed: "已评审", startReview: "开始评审",
       keep: "保持现有评级", adjust: "建议调整评级", reason: "评定依据", target: "选择目标评级",
       saveDecision: "保存评审意见", decisionSaved: "评审意见已保存", decisionRevoked: "已撤销该餐厅评审",
       cityKicker: "评审站点", cityTitle: "选择评审站点", citySearchPh: "输入北京 / Kyoto / China",
@@ -560,40 +560,40 @@
       langBtn: "EN"
     },
     en: {
-      portal: "Ctrip Meishilin 2027 Premium List Review", year: "Annual Final Review",
-      loginHeadline: "Council & Expert Review and Nomination", loginSub: "For list review, supplementary nominations, feedback submission and result receipts.",
+      portal: "Meishilin 2027 Review", year: "Annual Final Review",
+      loginHeadline: "Council & Expert Review", loginSub: "For list review, nominations, feedback and receipts.",
       nameLabel: "Reviewer Name", namePh: "Enter your full name", roleLabel: "Select Review Seat",
       roleBoard: "Council Member", roleBoardSub: "Council seat", roleConsultant: "Invited Consultant", roleConsultantSub: "Consultant seat",
       enter: "Start Review",
-      boardKicker: "Ctrip Meishilin 2027 Premium List Review", boardTitle: "Pending Restaurants",
-      currentCity: "Current station", switchCity: "Switch City",
+      boardKicker: "Meishilin 2027 Review", boardTitle: "Pending Restaurants",
+      currentCity: "Station", switchCity: "Switch City",
       searchPh: "Search by name, cuisine, city", allRatings: "All ratings",
       pillAll: "All", pillPending: "Pending", pillAgreed: "Kept", pillAdjusted: "Adjusted",
       addNomination: "Nominate", progress: "Station stats", submitBoard: "Submit Results",
-      pending: "Pending", agreed: "Kept", adjusted: "Adjusted", startReview: "Start Review",
+      pending: "Pending", agreed: "Kept", adjusted: "Adjusted", reviewed: "Reviewed", startReview: "Start Review",
       keep: "Keep current rating", adjust: "Suggest adjustment", reason: "Review basis", target: "Target rating",
       saveDecision: "Save Review", decisionSaved: "Review saved", decisionRevoked: "Review revoked",
       cityKicker: "Review station", cityTitle: "Select a station", citySearchPh: "Beijing / Kyoto / China",
-      addKicker: "Supplementary Nomination", addTitle: "Nominate a Restaurant", addName: "Restaurant name", addNamePh: "Full name",
+      addKicker: "Nomination", addTitle: "Nominate a Restaurant", addName: "Name", addNamePh: "Full name",
       addCountry: "Country", addCountryPh: "e.g. Japan", addCity: "City", addCityPh: "e.g. Kyoto",
-      addReason: "Review basis (min 15 chars)", addReasonPh: "Explain the rating adjustment reason for this restaurant.",
+      addReason: "Review basis (min 15 chars)", addReasonPh: "Reason for the rating adjustment.",
       checklistName: "Name, country and city filled", saveNom: "Save Nomination", savedNoms: "Saved nominations",
       nomSaved: "Nomination saved", nomDeleted: "Nomination revoked", revoke: "Revoke",
-      confirmKicker: "Review Confirmation", confirmTitle: "Pre-submission Review", confirmSub: "Review this round of opinions. You may add overall comments before submitting.",
+      confirmKicker: "Review Confirmation", confirmTitle: "Pre-submission Review", confirmSub: "Review your opinions. Add overall comments if any.",
       reviewedGroup: "Reviewed", keepCount: "Kept", adjustCount: "Adjusted",
-      reviewFormula: "Reviewed = Kept current rating + Suggested adjustment",
-      auditTitle: "Adjustments & Nominations", noAudit: "No adjustments or nominations at this station.", adjustDetail: "Adjustments", nominationDetail: "Nominations",
-      opinionLabel: "Overall review comments (optional)", opinionPh: "Overall comments on dining trends, list structure or review suggestions.",
+      reviewFormula: "Reviewed = Kept + Adjusted",
+      auditTitle: "Adjustments & Nominations", noAudit: "No adjustments or nominations.", adjustDetail: "Adjustments", nominationDetail: "Nominations",
+      opinionLabel: "Overall comments (optional)", opinionPh: "Comments on trends, structure or suggestions.",
       backEdit: "Edit", finalSign: "Confirm & Submit",
       certKicker: "Submission Complete", certTitle: "Submission Complete",
       copyReceipt: "Copy Receipt", reset: "Simulate Next Reviewer",
-      submittedToast: "Review submitted. Thank you for your deliberation.",
+      submittedToast: "Review submitted.",
       receiptExpert: "Reviewer", receiptRole: "Seat", receiptStation: "Station",
       receiptReviewed: "Reviewed", receiptKeep: "Kept", receiptAdjust: "Adjusted", receiptNom: "Nominations",
       receiptTime: "Submitted at", receiptOpinion: "Comments", receiptCode: "Receipt No.",
       roleZh: { BOARD_MEMBER: "Council Member", CONSULTANT: "Invited Consultant" },
-      thanksNote: "Thank you for participating in the 2027 Meishilin annual list review. Your deliberation has been recorded and will serve as a key reference at the finalization meeting.",
-      empty: "No pending restaurants under current filters.", nameShort: "Name must be at least 2 characters", roleRequired: "Please select a review seat",
+      thanksNote: "Thank you for joining the 2027 Meishilin review. Your input is recorded and will inform the final list.",
+      empty: "No pending restaurants.", nameShort: "Name needs 2+ characters", roleRequired: "Select a seat",
       langBtn: "中"
     }
   };
@@ -699,8 +699,7 @@
   function restaurantCard(r) {
     const review = state.reviews[r.id];
     const status = !review ? `<span class="tag">${tr("pending")}</span>`
-      : review.status === "AGREED" ? `<span class="tag-active">${tr("agreed")}</span>`
-      : `<span class="tag-outline">${tr("adjusted")} → ${ratingText[state.lang][review.target]}</span>`;
+      : `<span class="tag-active">${tr("reviewed")}</span>`;
     const cuisine = state.lang === "zh" ? r.cuisineZh : r.cuisineEn;
     const avg = state.lang === "zh" ? "人均" : "Avg";
     const name = state.lang === "zh" ? r.nameZh : r.nameEn;
@@ -836,6 +835,8 @@
       renderCitySelector();
     });
     $$('#city-tiers [data-city]').forEach(b => b.onclick = () => { state.city = b.dataset.city; selectCity(); });
+    $("#city-tiers").hidden = false;
+    $("#city-results").hidden = true;
   }
 
   function flatCities() {
