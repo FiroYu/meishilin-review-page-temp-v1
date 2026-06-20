@@ -560,12 +560,12 @@
       langBtn: "EN"
     },
     en: {
-      portal: "Meishilin 2027 Review", year: "Annual Final Review",
+      portal: "Trip.Gourmet 2027 Review", year: "Annual Final Review",
       loginHeadline: "Council & Expert Review", loginSub: "For list review, nominations, feedback and receipts.",
       nameLabel: "Reviewer Name", namePh: "Enter your full name", roleLabel: "Select Review Seat",
       roleBoard: "Council Member", roleBoardSub: "Council seat", roleConsultant: "Invited Consultant", roleConsultantSub: "Consultant seat",
       enter: "Start Review",
-      boardKicker: "Meishilin 2027 Review", boardTitle: "Pending Restaurants",
+      boardKicker: "Trip.Gourmet 2027 Review", boardTitle: "Pending Restaurants",
       currentCity: "Station", switchCity: "Switch City",
       searchPh: "Search by name, cuisine, city", allRatings: "All ratings",
       pillAll: "All", pillPending: "Pending", pillAgreed: "Kept", pillAdjusted: "Adjusted",
@@ -592,7 +592,7 @@
       receiptReviewed: "Reviewed", receiptKeep: "Kept", receiptAdjust: "Adjusted", receiptNom: "Nominations",
       receiptTime: "Submitted at", receiptOpinion: "Comments", receiptCode: "Receipt No.",
       roleZh: { BOARD_MEMBER: "Council Member", CONSULTANT: "Invited Consultant" },
-      thanksNote: "Thank you for joining the 2027 Meishilin review. Your input is recorded and will inform the final list.",
+      thanksNote: "Thank you for joining the 2027 Trip.Gourmet review. Your input is recorded and will inform the final list.",
       empty: "No pending restaurants.", nameShort: "Name needs 2+ characters", roleRequired: "Select a seat",
       langBtn: "中"
     }
@@ -693,7 +693,7 @@
         if (!hay.includes(q)) return false;
       }
       return true;
-    });
+    }).sort((a, b) => ratings.indexOf(a.rating) - ratings.indexOf(b.rating));
   }
 
   function restaurantCard(r) {
