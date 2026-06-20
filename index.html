@@ -75,10 +75,9 @@
 
   /* —— 身份填写页 —— */
   .gateway { justify-content: space-between; background: #f9fafb; }
-  .hero-mark { padding-top: 48px; text-align: left; display: grid; justify-items: start; gap: 12px; }
-  .hero-seal { width: 80px; height: 80px; border-radius: 12px; background: #e5e7eb; display: grid; place-items: center; color: #9ca3af; }
-  .gateway .title { max-width: 330px; color: #111827; font-size: 26px; }
-  .gateway .sub { max-width: 320px; color: #6b7280; font-size: 13px; }
+  .hero-mark { padding-top: 32px; padding-bottom: 4px; text-align: left; display: grid; justify-items: start; gap: 10px; }
+  .gateway .title { max-width: 330px; color: #111827; font-size: 26px; line-height: 1.2; letter-spacing: -0.01em; }
+  .gateway .sub { max-width: 320px; color: #6b7280; font-size: 13px; line-height: 1.5; }
   .form-surface {
     background: #ffffff; border-top: 1px solid #f3f4f6;
     padding: 20px; display: grid; gap: 16px;
@@ -162,9 +161,9 @@
   .restaurant:hover { border-color: #9ca3af; }
   .thumb { height: 64px; border-radius: 8px; background: #e5e7eb; display: grid; place-items: center; color: #9ca3af; }
   .rest-body { min-width: 0; display: grid; gap: 6px; }
-  .rest-title { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
-  .rest-title strong { font-size: 14px; line-height: 1.25; color: #111827;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .rest-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; min-width: 0; }
+  .rest-title strong { font-size: 14px; line-height: 1.3; color: #111827; font-weight: 700; }
+  .rest-title .rest-addr { font-size: 11px; color: #9ca3af; font-weight: 400; line-height: 1.35; word-break: break-word; min-width: 0; }
   .meta { font-size: 11px; color: #6b7280; line-height: 1.35; }
   .tag-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .tag, .tag-rating { padding: 4px 8px; font-size: 10px; font-weight: 600; color: #4b5563; border-radius: 4px; background: #f3f4f6; }
@@ -180,12 +179,14 @@
   .empty { border: 1px dashed #d1d5db; background: #ffffff; padding: 30px 16px; text-align: center; color: #6b7280; font-size: 13px; border-radius: 12px; display: grid; gap: 8px; justify-items: center; }
 
   .bottom-bar {
-    display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center;
-    padding: 10px 12px calc(env(safe-area-inset-bottom, 0px) + 10px);
+    display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center;
+    padding: 12px 12px calc(env(safe-area-inset-bottom, 0px) + 12px);
     border-top: 1px solid #f3f4f6; background: #ffffff; flex: 0 0 auto;
   }
-  .progress { text-align: center; display: grid; gap: 2px; font-size: 11px; color: #6b7280; min-width: 0; }
-  .progress strong { font-size: 13px; color: #111827; }
+  .bar-actions { display: flex; gap: 8px; align-items: stretch; flex: 0 0 auto; }
+  .bar-actions .primary, .bar-actions .secondary { min-height: 44px; }
+  .progress { text-align: left; display: grid; gap: 2px; font-size: 11px; color: #6b7280; min-width: 0; align-content: center; line-height: 1.35; }
+  .progress strong { font-size: 13px; color: #111827; font-weight: 700; }
 
   /* —— 抽屉 —— */
   .overlay { position: absolute; inset: 0; z-index: 80; display: flex; align-items: flex-end;
@@ -251,12 +252,13 @@
 
   /* —— 完成页 —— */
   .cert { background: #f9fafb; }
-  .receipt { margin: 16px; padding: 16px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.05); display: grid; gap: 12px; }
-  .receipt-row { display: grid; grid-template-columns: 96px 1fr; gap: 10px; font-size: 13px; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px; }
+  .receipt { margin: 20px 16px 0; padding: 18px 16px 20px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.05); display: grid; gap: 14px; }
+  .receipt-row { display: grid; grid-template-columns: 96px 1fr; gap: 10px; font-size: 13px; line-height: 1.5; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; }
   .receipt-row:last-child { border-bottom: 0; padding-bottom: 0; }
   .receipt-row span:first-child { color: #6b7280; font-weight: 600; }
   .receipt-row strong { color: #111827; font-weight: 700; word-break: break-word; }
   .cert .scroll-pad { flex: 1; overflow-y: auto; }
+  .cert .scroll-pad > .sub.screen-pad { padding-top: 4px; padding-bottom: 28px; color: #6b7280; font-size: 12px; line-height: 1.6; }
 
   /* —— Toast —— */
   .toast { position: absolute; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 14px); transform: translate(-50%, -8px); max-width: 84%;
@@ -269,6 +271,36 @@
   .list-wrap::-webkit-scrollbar-thumb, .sheet-body::-webkit-scrollbar-thumb, .audit-list::-webkit-scrollbar-thumb, .tier::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
 
   @media (max-width: 520px) { .device { width: 100vw; box-shadow: none; } }
+
+  /* —— 移动端多分辨率适配 —— */
+  /* 极小屏（iPhone SE 320~360px）：收紧底部双按钮、progress 只留数字 */
+  @media (max-width: 360px) {
+    .bottom-bar { grid-template-columns: 1fr auto; gap: 8px; padding: 10px 10px calc(env(safe-area-inset-bottom, 0px) + 10px); }
+    .bar-actions .primary, .bar-actions .secondary { min-height: 40px; padding: 0 10px; font-size: 12px; }
+    .progress > span:first-child { display: none; }
+    .progress strong { font-size: 12px; }
+    /* 收紧餐厅卡片三列，避免地址换行后过挤 */
+    .restaurant { grid-template-columns: 56px minmax(0,1fr) 76px; gap: 10px; padding: 10px; }
+    .thumb { height: 56px; }
+    .rest-action { width: 76px; min-height: 36px; font-size: 11px; }
+    .rest-title strong { font-size: 13px; }
+    .rest-title .rest-addr { font-size: 10px; }
+    /* 搜索栏 + 评级 select 极小屏收紧 */
+    .filter-line { grid-template-columns: 1fr 108px; gap: 6px; }
+    .searchbar { height: 40px; }
+    /* 城市标签防溢出 */
+    .city-label strong { font-size: 14px; }
+  }
+  /* 中小屏（361~400px）：地址字号微调 */
+  @media (max-width: 400px) and (min-width: 361px) {
+    .rest-title .rest-addr { font-size: 10.5px; }
+    .rest-action { width: 80px; font-size: 11.5px; }
+  }
+  /* 大屏手机（>=414px）：地址可以略大，按钮内边距舒适 */
+  @media (min-width: 414px) {
+    .bar-actions .primary, .bar-actions .secondary { padding: 0 16px; }
+    .rest-title .rest-addr { font-size: 11.5px; }
+  }
 </style>
 </head>
 <body>
@@ -282,15 +314,13 @@
       <div class="topbar">
         <div class="brand">
           <div class="seal"><i data-lucide="utensils" class="w-5 h-5" aria-hidden="true"></i></div>
-          <div><p class="eyebrow" data-i18n="portal">2027年美食林高端榜单评审</p></div>
+          <div><p class="eyebrow" data-i18n="portal">2027年携程美食林高端榜单评审</p></div>
         </div>
         <button class="lang" id="lang-login" aria-label="切换语言">英</button>
       </div>
       <div class="hero-mark screen-pad">
-        <div class="hero-seal"><i data-lucide="utensils" class="w-10 h-10" aria-hidden="true"></i></div>
-        <p class="eyebrow" data-i18n="year">年度终审通道</p>
-        <h2 class="title" data-i18n="loginHeadline">理事投票与专家终审工作台</h2>
-        <p class="sub" data-i18n="loginSub">用于年度榜单最终审议、补充提名、电子签署与结果存根。</p>
+        <h2 class="title" data-i18n="loginHeadline">理事与专家审核与提名</h2>
+        <p class="sub" data-i18n="loginSub">用于年度榜单审议、补充提名、反馈提交与结果存根。</p>
       </div>
       <div class="form-surface">
         <div class="field underline">
@@ -314,7 +344,7 @@
         <div class="brand">
           <div class="seal"><i data-lucide="utensils" class="w-5 h-5" aria-hidden="true"></i></div>
           <div>
-            <p class="eyebrow" data-i18n="boardKicker">2027年美食林高端榜单评审</p>
+            <p class="eyebrow" data-i18n="boardKicker">2027年携程美食林高端榜单评审</p>
             <h2 class="title" data-i18n="boardTitle">待评审餐厅</h2>
           </div>
         </div>
@@ -336,12 +366,14 @@
       </div>
       <div class="list-wrap" id="restaurant-list"></div>
       <div class="bottom-bar">
-        <button type="button" class="secondary" id="open-add" data-i18n="addNomination">增补</button>
         <div class="progress">
           <span data-i18n="progress">当前站点统计</span>
           <strong id="progress-label">增补 0 · 已评 0</strong>
         </div>
-        <button type="button" class="primary" id="submit-board" disabled data-i18n="submitBoard">终审落库</button>
+        <div class="bar-actions">
+          <button type="button" class="secondary" id="open-add" data-i18n="addNomination">增补</button>
+          <button type="button" class="primary" id="submit-board" disabled data-i18n="submitBoard">提交结果</button>
+        </div>
       </div>
     </div>
 
@@ -351,13 +383,13 @@
         <div class="brand">
           <div class="seal"><i data-lucide="clipboard-check" class="w-5 h-5" aria-hidden="true"></i></div>
           <div>
-            <p class="eyebrow" data-i18n="confirmKicker">终审确认</p>
+            <p class="eyebrow" data-i18n="confirmKicker">审核意见确认</p>
             <h2 class="title" data-i18n="confirmTitle">提交前复核</h2>
           </div>
         </div>
       </div>
       <div class="scroll-area screen-pad">
-        <p class="sub" data-i18n="confirmSub">请核对本城市审议结果，可补充整体意见后提交。</p>
+        <p class="sub" data-i18n="confirmSub">请核对本次评审意见，可补充整体意见后提交。</p>
         <div id="confirm-metrics"></div>
         <div class="summary">
           <p class="eyebrow" id="audit-title" data-i18n="auditTitle">提交前复核</p>
@@ -370,7 +402,7 @@
       </div>
       <div class="footer-actions">
         <button type="button" class="secondary" id="back-board" data-i18n="backEdit">返回修改</button>
-        <button type="button" class="primary" id="final-sign" data-i18n="finalSign">确认签署</button>
+        <button type="button" class="primary" id="final-sign" data-i18n="finalSign">确认提交</button>
       </div>
     </div>
 
@@ -388,10 +420,6 @@
       <div class="scroll-pad">
         <div class="receipt" id="receipt"></div>
         <p class="sub screen-pad" id="thanks-note" style="padding-top:0;"></p>
-        <div class="screen-pad" style="display:grid;gap:10px;">
-          <button type="button" class="primary" id="copy-receipt" data-i18n="copyReceipt">复制签署存根</button>
-          <button type="button" class="secondary" id="reset" data-i18n="reset">模拟下一位评委</button>
-        </div>
       </div>
     </div>
 
@@ -449,7 +477,7 @@
           </div>
           <div class="field">
             <label data-i18n="addReason">评定依据（不少于15字）</label>
-            <textarea id="nom-reason" rows="4" data-i18n-ph="addReasonPh" placeholder="请说明该商户的学术推荐理由。"></textarea>
+            <textarea id="nom-reason" rows="4" data-i18n-ph="addReasonPh" placeholder="请说明该商户的评级调整理由。"></textarea>
           </div>
           <div class="checklist" id="nom-check"></div>
           <button type="button" class="primary" id="save-nom" disabled data-i18n="saveNom">保存增补提名</button>
@@ -478,91 +506,91 @@
   };
 
   const restaurants = [
-    { id: "sh-001", nameZh: "醉月轩", nameEn: "Drunk Moon Pavilion", rating: "DIAMOND", cuisineZh: "本帮菜", cuisineEn: "Shanghainese", city: "Shanghai", country: "China", countryZh: "中国", cityZh: "上海", countryEn: "China", cityEn: "Shanghai", continent: "asia", price: 1200 },
-    { id: "sh-002", nameZh: "浦江二号", nameEn: "Pujiang No.2", rating: "PLATINUM", cuisineZh: "粤菜", cuisineEn: "Cantonese", city: "Shanghai", country: "China", countryZh: "中国", cityZh: "上海", countryEn: "China", cityEn: "Shanghai", continent: "asia", price: 1800 },
-    { id: "sh-003", nameZh: "外滩源·拾光", nameEn: "Bund Light", rating: "BLACK_DIAMOND", cuisineZh: "融合菜", cuisineEn: "Fusion", city: "Shanghai", country: "China", countryZh: "中国", cityZh: "上海", countryEn: "China", cityEn: "Shanghai", continent: "asia", price: 2600 },
-    { id: "bj-001", nameZh: "京兆尹", nameEn: "King's Joy", rating: "PLATINUM", cuisineZh: "素食", cuisineEn: "Vegetarian", city: "Beijing", country: "China", countryZh: "中国", cityZh: "北京", countryEn: "China", cityEn: "Beijing", continent: "asia", price: 1500 },
-    { id: "bj-002", nameZh: "拾久·胡同里", nameEn: "Shijiu Hutong", rating: "DIAMOND", cuisineZh: "京菜", cuisineEn: "Beijing Cuisine", city: "Beijing", country: "China", countryZh: "中国", cityZh: "北京", countryEn: "China", cityEn: "Beijing", continent: "asia", price: 900 },
-    { id: "cd-001", nameZh: "玉芝兰", nameEn: "Yu Zhi Lan", rating: "BLACK_DIAMOND", cuisineZh: "川菜", cuisineEn: "Sichuan", city: "Chengdu", country: "China", countryZh: "中国", cityZh: "成都", countryEn: "China", cityEn: "Chengdu", continent: "asia", price: 2000 },
-    { id: "cd-002", nameZh: "松云泽", nameEn: "Song Yun Ze", rating: "DIAMOND", cuisineZh: "川菜", cuisineEn: "Sichuan", city: "Chengdu", country: "China", countryZh: "中国", cityZh: "成都", countryEn: "China", cityEn: "Chengdu", continent: "asia", price: 1100 },
-    { id: "gz-001", nameZh: "白天鹅宾馆·玉堂春暖", nameEn: "White Swan Jade Hall", rating: "DIAMOND", cuisineZh: "粤菜", cuisineEn: "Cantonese", city: "Guangzhou", country: "China", countryZh: "中国", cityZh: "广州", countryEn: "China", cityEn: "Guangzhou", continent: "asia", price: 1300 },
-    { id: "hk-001", nameZh: "大班楼", nameEn: "The Chairman", rating: "BLACK_DIAMOND", cuisineZh: "粤菜", cuisineEn: "Cantonese", city: "Hong Kong", country: "Hong Kong", countryZh: "中国香港", cityZh: "香港", countryEn: "Hong Kong", cityEn: "Hong Kong", continent: "asia", price: 1600 },
-    { id: "tk-001", nameZh: "吉武", nameEn: "Yoshitake", rating: "BLACK_DIAMOND", cuisineZh: "日料·寿司", cuisineEn: "Sushi", city: "Tokyo", country: "Japan", countryZh: "日本", cityZh: "东京", countryEn: "Japan", cityEn: "Tokyo", continent: "asia", price: 2800 },
-    { id: "tk-002", nameZh: "Quintessence", nameEn: "Quintessence", rating: "PLATINUM", cuisineZh: "法餐", cuisineEn: "French", city: "Tokyo", country: "Japan", countryZh: "日本", cityZh: "东京", countryEn: "Japan", cityEn: "Tokyo", continent: "asia", price: 3200 },
-    { id: "pa-001", nameZh: "Le Cinq", nameEn: "Le Cinq", rating: "PLATINUM", cuisineZh: "法餐", cuisineEn: "French", city: "Paris", country: "France", countryZh: "法国", cityZh: "巴黎", countryEn: "France", cityEn: "Paris", continent: "europe", price: 3500 },
-    { id: "ny-001", nameZh: "Eleven Madison Park", nameEn: "Eleven Madison Park", rating: "DIAMOND", cuisineZh: "新美式", cuisineEn: "New American", city: "New York", country: "USA", countryZh: "美国", cityZh: "纽约", countryEn: "USA", cityEn: "New York", continent: "north_america", price: 3000 }
+    { id: "sh-001", nameZh: "醉月轩", nameEn: "Drunk Moon Pavilion", rating: "DIAMOND", cuisineZh: "本帮菜", cuisineEn: "Shanghainese", city: "Shanghai", country: "China", countryZh: "中国", cityZh: "上海", countryEn: "China", cityEn: "Shanghai", continent: "asia", price: 1200, addressZh: "上海市黄浦区中山东一路18号外滩18号", addressEn: "18 the Bund, No. 18 Zhongshan East 1st Rd, Shanghai" },
+    { id: "sh-002", nameZh: "浦江二号", nameEn: "Pujiang No.2", rating: "PLATINUM", cuisineZh: "粤菜", cuisineEn: "Cantonese", city: "Shanghai", country: "China", countryZh: "中国", cityZh: "上海", countryEn: "China", cityEn: "Shanghai", continent: "asia", price: 1800, addressZh: "上海市浦东新区陆家嘴环路1000号", addressEn: "No. 1000 Lujiazui Ring Rd, Pudong, Shanghai" },
+    { id: "sh-003", nameZh: "外滩源·拾光", nameEn: "Bund Light", rating: "BLACK_DIAMOND", cuisineZh: "融合菜", cuisineEn: "Fusion", city: "Shanghai", country: "China", countryZh: "中国", cityZh: "上海", countryEn: "China", cityEn: "Shanghai", continent: "asia", price: 2600, addressZh: "上海市黄浦区圆明园路169号外滩源", addressEn: "Bund Source, No. 169 Yuanmingyuan Rd, Shanghai" },
+    { id: "bj-001", nameZh: "京兆尹", nameEn: "King's Joy", rating: "PLATINUM", cuisineZh: "素食", cuisineEn: "Vegetarian", city: "Beijing", country: "China", countryZh: "中国", cityZh: "北京", countryEn: "China", cityEn: "Beijing", continent: "asia", price: 1500, addressZh: "北京市东城区五道营胡同2号", addressEn: "No. 2 Wudaoying Hutong, Dongcheng District, Beijing" },
+    { id: "bj-002", nameZh: "拾久·胡同里", nameEn: "Shijiu Hutong", rating: "DIAMOND", cuisineZh: "京菜", cuisineEn: "Beijing Cuisine", city: "Beijing", country: "China", countryZh: "中国", cityZh: "北京", countryEn: "China", cityEn: "Beijing", continent: "asia", price: 900, addressZh: "北京市东城区东四十条胡同", addressEn: "Dongsishitiao Hutong, Dongcheng District, Beijing" },
+    { id: "cd-001", nameZh: "玉芝兰", nameEn: "Yu Zhi Lan", rating: "BLACK_DIAMOND", cuisineZh: "川菜", cuisineEn: "Sichuan", city: "Chengdu", country: "China", countryZh: "中国", cityZh: "成都", countryEn: "China", cityEn: "Chengdu", continent: "asia", price: 2000, addressZh: "成都市青羊区长发街24号附1号", addressEn: "No. 24-1 Changfa Street, Qingyang District, Chengdu" },
+    { id: "cd-002", nameZh: "松云泽", nameEn: "Song Yun Ze", rating: "DIAMOND", cuisineZh: "川菜", cuisineEn: "Sichuan", city: "Chengdu", country: "China", countryZh: "中国", cityZh: "成都", countryEn: "China", cityEn: "Chengdu", continent: "asia", price: 1100, addressZh: "成都市锦江区琉璃路8号翡翠里2-8号", addressEn: "No. 2-8 Jadeite, No. 8 Liuli Road, Jinjiang District, Chengdu" },
+    { id: "gz-001", nameZh: "白天鹅宾馆·玉堂春暖", nameEn: "White Swan Jade Hall", rating: "DIAMOND", cuisineZh: "粤菜", cuisineEn: "Cantonese", city: "Guangzhou", country: "China", countryZh: "中国", cityZh: "广州", countryEn: "China", cityEn: "Guangzhou", continent: "asia", price: 1300, addressZh: "广州市荔湾区沙面南街1号白天鹅宾馆3楼", addressEn: "3/F, White Swan Hotel, No. 1 Shamian South Street, Liwan District, Guangzhou" },
+    { id: "hk-001", nameZh: "大班楼", nameEn: "The Chairman", rating: "BLACK_DIAMOND", cuisineZh: "粤菜", cuisineEn: "Cantonese", city: "Hong Kong", country: "Hong Kong", countryZh: "中国香港", cityZh: "香港", countryEn: "Hong Kong", cityEn: "Hong Kong", continent: "asia", price: 1600, addressZh: "香港中环威灵顿街198号The Wellington 3楼", addressEn: "3/F, The Wellington, 198 Wellington Street, Central, Hong Kong" },
+    { id: "tk-001", nameZh: "吉武", nameEn: "Yoshitake", rating: "BLACK_DIAMOND", cuisineZh: "日料·寿司", cuisineEn: "Sushi", city: "Tokyo", country: "Japan", countryZh: "日本", cityZh: "东京", countryEn: "Japan", cityEn: "Tokyo", continent: "asia", price: 2800, addressZh: "东京都中央区银座7-8-13 Brown Place 9F", addressEn: "Brown Place 9F, 7-8-13 Ginza, Chuo City, Tokyo" },
+    { id: "tk-002", nameZh: "Quintessence", nameEn: "Quintessence", rating: "PLATINUM", cuisineZh: "法餐", cuisineEn: "French", city: "Tokyo", country: "Japan", countryZh: "日本", cityZh: "东京", countryEn: "Japan", cityEn: "Tokyo", continent: "asia", price: 3200, addressZh: "东京都品川区北品川6-7-29 Garden City Shinagawa Gotenyama 1F", addressEn: "Garden City Shinagawa Gotenyama 1F, 6-7-29 Kitashinagawa, Shinagawa City, Tokyo" },
+    { id: "pa-001", nameZh: "Le Cinq", nameEn: "Le Cinq", rating: "PLATINUM", cuisineZh: "法餐", cuisineEn: "French", city: "Paris", country: "France", countryZh: "法国", cityZh: "巴黎", countryEn: "France", cityEn: "Paris", continent: "europe", price: 3500, addressZh: "巴黎第八区乔治五世大道31号", addressEn: "31 Avenue George V, 75008 Paris, France" },
+    { id: "ny-001", nameZh: "Eleven Madison Park", nameEn: "Eleven Madison Park", rating: "DIAMOND", cuisineZh: "新美式", cuisineEn: "New American", city: "New York", country: "USA", countryZh: "美国", cityZh: "纽约", countryEn: "USA", cityEn: "New York", continent: "north_america", price: 3000, addressZh: "纽约市麦迪逊大道11号", addressEn: "11 Madison Avenue, New York, NY 10010, USA" }
   ];
 
   const i18n = {
     zh: {
-      portal: "2027年美食林高端榜单评审", year: "年度终审通道",
-      loginHeadline: "理事投票与专家终审工作台", loginSub: "用于年度榜单最终审议、补充提名、电子签署与结果存根。",
+      portal: "2027年携程美食林高端榜单评审", year: "年度终审通道",
+      loginHeadline: "理事与专家审核与提名", loginSub: "用于年度榜单审议、补充提名、反馈提交与结果存根。",
       nameLabel: "评审专家姓名", namePh: "请输入真实姓名 / 拼音", roleLabel: "选择评审席位",
       roleBoard: "理事会成员", roleBoardSub: "理事席位", roleConsultant: "特邀顾问", roleConsultantSub: "顾问席位",
       enter: "开始评审",
-      boardKicker: "2027年美食林高端榜单评审", boardTitle: "待评审餐厅",
+      boardKicker: "2027年携程美食林高端榜单评审", boardTitle: "待评审餐厅",
       currentCity: "当前评审城市", switchCity: "切换城市",
       searchPh: "搜索商户、菜系、城市", allRatings: "全部评级",
       pillAll: "全部", pillPending: "待审", pillAgreed: "已保持", pillAdjusted: "已调整",
-      addNomination: "增补", progress: "当前站点统计", submitBoard: "终审落库",
+      addNomination: "增补", progress: "当前站点统计", submitBoard: "提交结果",
       pending: "待评审", agreed: "已保持", adjusted: "已调整", startReview: "开始评审",
       keep: "保持现有评级", adjust: "建议调整评级", reason: "评定依据", target: "选择目标评级",
       saveDecision: "保存评审意见", decisionSaved: "评审意见已保存", decisionRevoked: "已撤销该餐厅评审",
       cityKicker: "评审站点", cityTitle: "选择评审站点", citySearchPh: "输入北京 / Kyoto / China",
       addKicker: "增补提名", addTitle: "提请增补商户", addName: "商户名称", addNamePh: "请输入商户全名",
       addCountry: "国家", addCountryPh: "如 日本", addCity: "城市", addCityPh: "如 京都",
-      addReason: "评定依据（不少于15字）", addReasonPh: "请说明该商户的学术推荐理由。",
+      addReason: "评定依据（不少于15字）", addReasonPh: "请说明该商户的评级调整理由。",
       checklistName: "名称、国家、城市已填写", saveNom: "保存增补提名", savedNoms: "已保存增补名单",
       nomSaved: "增补提名已保存", nomDeleted: "已撤回该增补提名", revoke: "撤回",
-      confirmKicker: "终审确认", confirmTitle: "提交前复核", confirmSub: "请核对本城市审议结果，可补充整体意见后提交。",
+      confirmKicker: "审核意见确认", confirmTitle: "提交前复核", confirmSub: "请核对本次评审意见，可补充整体意见后提交。",
       reviewedGroup: "已评审", keepCount: "保持", adjustCount: "调整",
       reviewFormula: "已评审 = 保持现有评级 + 建议调整评级",
       auditTitle: "调整与增补明细", noAudit: "本站点暂无调整或增补记录。", adjustDetail: "调整明细", nominationDetail: "增补明细",
       opinionLabel: "总体评审意见与寄语（可选）", opinionPh: "可填写对本大区餐饮趋势、榜单结构或评审建议的总体意见。",
-      backEdit: "返回修改", finalSign: "确认签署",
+      backEdit: "返回修改", finalSign: "确认提交",
       certKicker: "提交完成", certTitle: "提交完成",
       copyReceipt: "复制签署存根", reset: "模拟下一位评委",
       submittedToast: "评审结果已落库，感谢您的审议。",
       receiptExpert: "评审专家", receiptRole: "评审席位", receiptStation: "评审站点",
       receiptReviewed: "已评审", receiptKeep: "保持", receiptAdjust: "调整", receiptNom: "增补",
-      receiptTime: "签署时间", receiptOpinion: "评审寄语", receiptCode: "存根编号",
+      receiptTime: "提交时间", receiptOpinion: "评审寄语", receiptCode: "存根编号",
       roleZh: { BOARD_MEMBER: "理事会成员", CONSULTANT: "特邀顾问" },
       thanksNote: "感谢您参与 2027 年美食林年度榜单评审。您的审议意见已正式落库，将于榜单定稿会议中作为重要参考依据。",
       empty: "该筛选条件下暂无待评审餐厅。", nameShort: "姓名至少 2 个字符", roleRequired: "请选择评审席位",
-      langBtn: "英"
+      langBtn: "EN"
     },
     en: {
       portal: "Ctrip Meishilin 2027 Premium List Review", year: "Annual Final Review",
-      loginHeadline: "Council Voting & Expert Final Review Workbench", loginSub: "For final deliberation, supplementary nominations, e-signing and result receipts.",
-      nameLabel: "Reviewer Name", namePh: "Enter real name / pinyin", roleLabel: "Select Review Seat",
+      loginHeadline: "Council & Expert Review and Nomination", loginSub: "For list review, supplementary nominations, feedback submission and result receipts.",
+      nameLabel: "Reviewer Name", namePh: "Enter your full name", roleLabel: "Select Review Seat",
       roleBoard: "Council Member", roleBoardSub: "Council seat", roleConsultant: "Invited Consultant", roleConsultantSub: "Consultant seat",
       enter: "Start Review",
       boardKicker: "Ctrip Meishilin 2027 Premium List Review", boardTitle: "Pending Restaurants",
       currentCity: "Current station", switchCity: "Switch City",
       searchPh: "Search by name, cuisine, city", allRatings: "All ratings",
       pillAll: "All", pillPending: "Pending", pillAgreed: "Kept", pillAdjusted: "Adjusted",
-      addNomination: "Nominate", progress: "Station stats", submitBoard: "Submit",
+      addNomination: "Nominate", progress: "Station stats", submitBoard: "Submit Results",
       pending: "Pending", agreed: "Kept", adjusted: "Adjusted", startReview: "Start Review",
       keep: "Keep current rating", adjust: "Suggest adjustment", reason: "Review basis", target: "Target rating",
       saveDecision: "Save Review", decisionSaved: "Review saved", decisionRevoked: "Review revoked",
       cityKicker: "Review station", cityTitle: "Select a station", citySearchPh: "Beijing / Kyoto / China",
       addKicker: "Supplementary Nomination", addTitle: "Nominate a Restaurant", addName: "Restaurant name", addNamePh: "Full name",
       addCountry: "Country", addCountryPh: "e.g. Japan", addCity: "City", addCityPh: "e.g. Kyoto",
-      addReason: "Review basis (min 15 chars)", addReasonPh: "Explain the academic reason for this nomination.",
+      addReason: "Review basis (min 15 chars)", addReasonPh: "Explain the rating adjustment reason for this restaurant.",
       checklistName: "Name, country and city filled", saveNom: "Save Nomination", savedNoms: "Saved nominations",
       nomSaved: "Nomination saved", nomDeleted: "Nomination revoked", revoke: "Revoke",
-      confirmKicker: "Final Confirmation", confirmTitle: "Pre-submission Review", confirmSub: "Review the station results. You may add overall comments before submitting.",
+      confirmKicker: "Review Confirmation", confirmTitle: "Pre-submission Review", confirmSub: "Review this round of opinions. You may add overall comments before submitting.",
       reviewedGroup: "Reviewed", keepCount: "Kept", adjustCount: "Adjusted",
       reviewFormula: "Reviewed = Kept current rating + Suggested adjustment",
       auditTitle: "Adjustments & Nominations", noAudit: "No adjustments or nominations at this station.", adjustDetail: "Adjustments", nominationDetail: "Nominations",
       opinionLabel: "Overall review comments (optional)", opinionPh: "Overall comments on dining trends, list structure or review suggestions.",
-      backEdit: "Edit", finalSign: "Confirm & Sign",
+      backEdit: "Edit", finalSign: "Confirm & Submit",
       certKicker: "Submission Complete", certTitle: "Submission Complete",
       copyReceipt: "Copy Receipt", reset: "Simulate Next Reviewer",
       submittedToast: "Review submitted. Thank you for your deliberation.",
       receiptExpert: "Reviewer", receiptRole: "Seat", receiptStation: "Station",
       receiptReviewed: "Reviewed", receiptKeep: "Kept", receiptAdjust: "Adjusted", receiptNom: "Nominations",
-      receiptTime: "Signed at", receiptOpinion: "Comments", receiptCode: "Receipt No.",
+      receiptTime: "Submitted at", receiptOpinion: "Comments", receiptCode: "Receipt No.",
       roleZh: { BOARD_MEMBER: "Council Member", CONSULTANT: "Invited Consultant" },
       thanksNote: "Thank you for participating in the 2027 Meishilin annual list review. Your deliberation has been recorded and will serve as a key reference at the finalization meeting.",
       empty: "No pending restaurants under current filters.", nameShort: "Name must be at least 2 characters", roleRequired: "Please select a review seat",
@@ -629,7 +657,11 @@
     const c = restaurants.find(r => r.city === state.city) || {};
     const country = state.lang === "zh" ? (c.countryZh || c.country) : (c.countryEn || c.country);
     const city = state.lang === "zh" ? (c.cityZh || c.city) : (c.cityEn || c.city);
-    $("#city-label").textContent = `${country} · ${city}`;
+    const countryKey = c.country || "";
+    const cityKey = c.city || "";
+    const same = (country === city) || (countryKey && countryKey === cityKey) ||
+      (c.countryZh && c.countryZh === c.cityZh) || (c.countryEn && c.countryEn === c.cityEn);
+    $("#city-label").textContent = same ? country : `${country} · ${city}`;
   }
 
   function renderRatingFilter() {
@@ -671,10 +703,13 @@
       : `<span class="tag-outline">${tr("adjusted")} → ${ratingText[state.lang][review.target]}</span>`;
     const cuisine = state.lang === "zh" ? r.cuisineZh : r.cuisineEn;
     const avg = state.lang === "zh" ? "人均" : "Avg";
+    const name = state.lang === "zh" ? r.nameZh : r.nameEn;
+    const addr = state.lang === "zh" ? (r.addressZh || "") : (r.addressEn || "");
+    const addrHtml = addr ? `<span class="rest-addr">（${html(addr)}）</span>` : "";
     return `<article class="restaurant" data-id="${r.id}">
       <div class="thumb"><i data-lucide="utensils" class="w-6 h-6" aria-hidden="true"></i></div>
       <div class="rest-body">
-        <div class="rest-title"><strong>${html(state.lang === "zh" ? r.nameZh : r.nameEn)}</strong></div>
+        <div class="rest-title"><strong>${html(name)}</strong>${addrHtml}</div>
         <p class="meta">${html(cuisine)} · ${avg} ¥${r.price}</p>
         <div class="tag-row"><span class="tag-rating">${ratingText[state.lang][r.rating]}</span>${status}</div>
       </div>
@@ -973,8 +1008,7 @@
       <div class="receipt-row"><span>${tr("receiptReviewed")}</span><strong>${r.reviewed}（${tr("receiptKeep")} ${r.agreed} · ${tr("receiptAdjust")} ${r.adjusted}）</strong></div>
       <div class="receipt-row"><span>${tr("receiptNom")}</span><strong>${r.noms}</strong></div>
       <div class="receipt-row"><span>${tr("receiptTime")}</span><strong>${r.time}</strong></div>
-      ${r.opinion ? `<div class="receipt-row"><span>${tr("receiptOpinion")}</span><strong>${html(r.opinion)}</strong></div>` : ""}
-      <div class="receipt-row"><span>${tr("receiptCode")}</span><strong>${r.code}</strong></div>`;
+      ${r.opinion ? `<div class="receipt-row"><span>${tr("receiptOpinion")}</span><strong>${html(r.opinion)}</strong></div>` : ""}`;
     $("#thanks-note").textContent = tr("thanksNote");
     if (window.lucide) lucide.createIcons();
   }
@@ -1054,8 +1088,6 @@
     $("#back-board").onclick = () => { showStage("board"); state.stage = "board"; };
     $("#final-opinion").oninput = e => { state.confirmOpinion = e.target.value; };
     $("#final-sign").onclick = sign;
-    $("#copy-receipt").onclick = copyReceipt;
-    $("#reset").onclick = resetAll;
 
     $$("[data-close]").forEach(b => b.onclick = () => closeSheet(b.dataset.close));
     $$(".overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o) o.classList.remove("open"); }));
