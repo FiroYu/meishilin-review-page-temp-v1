@@ -1,1182 +1,1079 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>2027 携程美食林理事终审投票页</title>
-  <style>
-    :root {
-      --app-height: 100vh;
-      --paper: #fbfaf7;
-      --paper-2: #f2eee6;
-      --ink: #171717;
-      --muted: #6f6a61;
-      --line: #d9d1c3;
-      --gold: #b48a3c;
-      --blue: #275d8c;
-      --teal: #2f746d;
-      --red: #b42318;
-      --black: #070707;
-      --shadow: 0 28px 80px rgba(0, 0, 0, .42);
-      font-family: Inter, "SF Pro Display", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f9fafb">
+<title>2027 携程美食林理事终审投票页</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root { --app-height: 100vh; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 100%; min-height: 100%; }
+  body {
+    background: #f3f4f6;
+    color: #111827;
+    font-family: Inter, "SF Pro Display", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { border: 0; cursor: pointer; background: none; }
+  button:disabled { cursor: not-allowed; opacity: .4; }
+  h1, h2, h3, p { margin: 0; }
+  i[data-lucide] { flex: 0 0 auto; }
 
-    * { box-sizing: border-box; }
-    html, body { margin: 0; width: 100%; height: var(--app-height); min-height: 100%; background: var(--paper); color: var(--ink); }
-    body {
-      position: fixed;
-      inset: 0;
-      overflow: hidden;
-      background: var(--paper);
-    }
-    button, input, select, textarea { font: inherit; }
-    button { border: 0; cursor: pointer; }
-    button:disabled { cursor: not-allowed; opacity: .45; }
+  /* —— 骨架：去手机外壳，桌面居中 max-w，移动全屏 —— */
+  .device {
+    width: min(448px, 100vw);
+    max-width: 448px;
+    min-height: var(--app-height);
+    margin: 0 auto;
+    background: #f9fafb;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .app {
+    min-height: var(--app-height);
+    position: relative;
+    overflow: hidden;
+    background: #f9fafb;
+    display: flex;
+    flex-direction: column;
+  }
+  .stage {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none; transform: translateY(10px);
+    transition: opacity .28s ease, transform .28s ease;
+  }
+  .stage.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .screen-pad { padding: 16px; }
 
-    .device {
-      width: min(430px, 100vw);
-      height: var(--app-height);
-      min-height: 0;
-      margin: 0 auto;
-      border: 0;
-      border-radius: 0;
-      background: var(--paper);
-      box-shadow: none;
-      overflow: hidden;
-      position: relative;
-    }
-    .app {
-      height: 100%;
-      position: relative;
-      overflow: hidden;
-      background: var(--paper);
-    }
-    .stage {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(10px);
-      transition: opacity .26s ease, transform .26s ease;
-    }
-    .stage.active {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-    .screen-pad { padding: 16px; }
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: calc(env(safe-area-inset-top, 0px) + 10px) 14px 10px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(251, 250, 247, .95);
-      flex: 0 0 auto;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-    }
-    .seal {
-      width: 36px;
-      height: 36px;
-      border: 1px solid var(--gold);
-      display: grid;
-      place-items: center;
-      color: var(--gold);
-      font-weight: 800;
-      letter-spacing: .06em;
-      background: #fffdf9;
-    }
-    h1, h2, h3, p { margin: 0; }
-    .eyebrow {
-      font-size: 11px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 800;
-    }
-    .title {
-      font-size: 18px;
-      line-height: 1.12;
-      font-weight: 860;
-      color: var(--black);
-    }
-    .sub {
-      font-size: 12px;
-      line-height: 1.45;
-      color: var(--muted);
-    }
-    .lang {
-      flex: 0 0 auto;
-      width: 34px;
-      height: 26px;
-      padding: 0;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, .72);
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 800;
-      line-height: 1;
-      letter-spacing: 0;
-    }
-    .lang:hover { border-color: var(--gold); color: var(--ink); background: #fff; }
-    .gateway {
-      justify-content: space-between;
-      background:
-        linear-gradient(180deg, rgba(180, 138, 60, .12), transparent 34%),
-        var(--paper);
-    }
-    .hero-mark {
-      padding-top: 28px;
-      text-align: center;
-      display: grid;
-      justify-items: center;
-      gap: 12px;
-    }
-    .hero-seal {
-      width: 82px;
-      height: 82px;
-      border: 1px solid var(--gold);
-      display: grid;
-      place-items: center;
-      color: var(--gold);
-      background: #fffdf8;
-      font-weight: 900;
-      font-size: 22px;
-      position: relative;
-    }
-    .hero-seal:before, .hero-seal:after {
-      content: "";
-      position: absolute;
-      inset: 10px;
-      border-top: 1px solid rgba(180, 138, 60, .36);
-      border-bottom: 1px solid rgba(180, 138, 60, .36);
-      transform: rotate(45deg);
-    }
-    .hero-seal:after { transform: rotate(-45deg); }
-    .form-surface {
-      background: rgba(255, 255, 255, .72);
-      border-top: 1px solid var(--line);
-      padding: 20px;
-      display: grid;
-      gap: 16px;
-    }
-    .field { display: grid; gap: 8px; }
-    label {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 760;
-    }
-    input, select, textarea {
-      width: 100%;
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--ink);
-      border-radius: 0;
-      padding: 11px 12px;
-      outline: none;
-      transition: border-color .16s ease, box-shadow .16s ease;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(180, 138, 60, .13);
-    }
-    textarea { resize: none; line-height: 1.45; }
-    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .choice {
-      border: 1px solid var(--line);
-      background: #fff;
-      padding: 12px 10px;
-      text-align: left;
-      display: grid;
-      gap: 3px;
-      transition: background .16s ease, border-color .16s ease, transform .16s ease;
-    }
-    .choice strong { font-size: 13px; }
-    .choice span { font-size: 11px; color: var(--muted); }
-    .choice.active {
-      border-color: var(--black);
-      background: #171717;
-      color: #fff;
-      transform: translateY(-1px);
-    }
-    .choice.active span { color: rgba(255,255,255,.68); }
-    .primary, .secondary, .ghost, .danger {
-      min-height: 42px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 0 14px;
-      font-weight: 850;
-      font-size: 13px;
-      transition: transform .16s ease, background .16s ease, border-color .16s ease;
-    }
-    .primary { background: var(--black); color: #fff; }
-    .primary:hover:not(:disabled), .secondary:hover:not(:disabled), .ghost:hover:not(:disabled) { transform: translateY(-1px); }
-    .secondary { background: #fff; border: 1px solid var(--line); color: var(--ink); }
-    .ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); }
-    .danger { background: #fff; border: 1px solid rgba(180, 35, 24, .32); color: var(--red); }
+  /* —— 顶栏 —— */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 12px;
+    border-bottom: 1px solid #f3f4f6; background: #ffffff; flex: 0 0 auto;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .seal {
+    width: 36px; height: 36px; border-radius: 8px; background: #e5e7eb;
+    display: grid; place-items: center; color: #6b7280; flex: 0 0 auto;
+  }
+  .eyebrow { font-size: 12px; color: #6b7280; font-weight: 600; line-height: 1.3; }
+  .title { font-size: 18px; line-height: 1.15; font-weight: 700; color: #111827; }
+  .sub { font-size: 12px; line-height: 1.45; color: #6b7280; }
+  .lang {
+    flex: 0 0 auto; width: 40px; height: 28px; padding: 0;
+    border: 1px solid #e5e7eb; border-radius: 9999px; background: #ffffff; color: #374151;
+    font-size: 12px; font-weight: 700;
+  }
+  .lang:hover { background: #f3f4f6; }
 
-    .board { background: var(--paper); }
-    .city-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px 18px 12px;
-      border-bottom: 1px solid var(--line);
-      background: #fffdf9;
-    }
-    .city-label { display: grid; gap: 2px; min-width: 0; }
-    .city-label strong { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .filters {
-      display: grid;
-      gap: 10px;
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(242, 238, 230, .65);
-    }
-    .filter-line { display: grid; grid-template-columns: 1fr 126px; gap: 8px; }
-    .pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
-    .pill {
-      flex: 0 0 auto;
-      border: 1px solid var(--line);
-      background: #fff;
-      padding: 7px 10px;
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .pill.active { background: var(--ink); color: #fff; border-color: var(--ink); }
-    .list-wrap {
-      flex: 1;
-      overflow-y: auto;
-      padding: 14px;
-      display: grid;
-      align-content: start;
-      gap: 10px;
-    }
-    .restaurant {
-      display: grid;
-      grid-template-columns: 72px 1fr auto;
-      gap: 12px;
-      align-items: center;
-      padding: 12px;
-      background: #fff;
-      border: 1px solid var(--line);
-      text-align: left;
-      width: 100%;
-      color: var(--ink);
-    }
-    .restaurant:hover { border-color: var(--gold); }
-    .restaurant .secondary {
-      min-height: 30px;
-      padding: 0 9px;
-      font-size: 11px;
-    }
-    .thumb {
-      height: 72px;
-      background:
-        linear-gradient(135deg, rgba(180,138,60,.18), rgba(47,116,109,.12)),
-        #f5f0e6;
-      border: 1px solid rgba(180, 138, 60, .25);
-      display: grid;
-      place-items: center;
-      color: var(--gold);
-      font-weight: 900;
-      font-size: 18px;
-    }
-    .rest-body { min-width: 0; display: grid; gap: 6px; }
-    .rest-title { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
-    .rest-title strong { font-size: 14px; line-height: 1.25; }
-    .rest-title span { font-size: 11px; color: var(--muted); }
-    .meta { font-size: 11px; color: var(--muted); line-height: 1.35; }
-    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
-    .tag {
-      border: 1px solid var(--line);
-      padding: 4px 6px;
-      font-size: 10px;
-      font-weight: 850;
-      color: var(--muted);
-      background: #fffdf9;
-    }
-    .tag.gold { color: #7b581c; border-color: rgba(180,138,60,.36); background: rgba(180,138,60,.09); }
-    .tag.teal { color: var(--teal); border-color: rgba(47,116,109,.28); background: rgba(47,116,109,.08); }
-    .tag.blue { color: var(--blue); border-color: rgba(39,93,140,.28); background: rgba(39,93,140,.08); }
-    .quick-actions { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
-    .rest-action { align-self: center; white-space: nowrap; }
-    .empty {
-      border: 1px dashed var(--line);
-      background: rgba(255,255,255,.58);
-      padding: 30px 16px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
-    }
-    .bottom-bar {
-      display: grid;
-      grid-template-columns: 92px 1fr 116px;
-      gap: 8px;
-      align-items: center;
-      padding: 8px 10px calc(env(safe-area-inset-bottom, 0px) + 8px);
-      border-top: 1px solid var(--line);
-      background: rgba(251,250,247,.96);
-      flex: 0 0 auto;
-    }
-    .progress {
-      text-align: center;
-      display: grid;
-      gap: 3px;
-      font-size: 11px;
-      color: var(--muted);
-      min-width: 0;
-    }
-    .progress strong { font-size: 13px; color: var(--ink); }
+  /* —— 身份填写页 —— */
+  .gateway { justify-content: space-between; background: #f9fafb; }
+  .hero-mark { padding-top: 48px; text-align: left; display: grid; justify-items: start; gap: 12px; }
+  .hero-seal { width: 80px; height: 80px; border-radius: 12px; background: #e5e7eb; display: grid; place-items: center; color: #9ca3af; }
+  .gateway .title { max-width: 330px; color: #111827; font-size: 26px; }
+  .gateway .sub { max-width: 320px; color: #6b7280; font-size: 13px; }
+  .form-surface {
+    background: #ffffff; border-top: 1px solid #f3f4f6;
+    padding: 20px; display: grid; gap: 16px;
+  }
+  .field { display: grid; gap: 8px; }
+  label { color: #374151; font-size: 13px; font-weight: 700; }
+  input, select, textarea {
+    width: 100%; border: 1px solid #e5e7eb; background: #ffffff; color: #111827;
+    border-radius: 8px; padding: 11px 12px; outline: none;
+    transition: border-color .16s ease, box-shadow .16s ease; font-size: 14px;
+  }
+  input:focus, select:focus, textarea:focus { border-color: #111827; box-shadow: 0 0 0 3px rgba(17,24,39,.08); }
+  input::placeholder, textarea::placeholder { color: #9ca3af; }
+  textarea { resize: none; line-height: 1.5; }
+  .field.underline input { border: 0; border-bottom: 1px solid #e5e7eb; border-radius: 0; padding-left: 0; padding-right: 0; background: transparent; }
+  .field.underline input:focus { box-shadow: none; border-bottom-color: #111827; }
 
-    .overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 80;
-      display: flex;
-      align-items: flex-end;
-      background: rgba(0,0,0,.38);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .22s ease;
-    }
-    .overlay.open { opacity: 1; pointer-events: auto; }
-    .sheet {
-      width: 100%;
-      max-height: 82%;
-      background: var(--paper);
-      border-top: 1px solid var(--line);
-      transform: translateY(100%);
-      transition: transform .3s cubic-bezier(.16, 1, .3, 1);
-      display: flex;
-      flex-direction: column;
-    }
-    .overlay.open .sheet { transform: translateY(0); }
-    .sheet-head {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: start;
-      background: #fffdf9;
-    }
-    .sheet-body { padding: 14px; overflow-y: auto; display: grid; gap: 14px; }
-    .x { width: 34px; height: 34px; background: #fff; border: 1px solid var(--line); font-weight: 900; }
-    .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .checklist {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.64);
-      padding: 10px;
-      display: grid;
-      gap: 7px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .ok { color: var(--teal); font-weight: 850; }
-    .bad { color: var(--red); font-weight: 850; }
-    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .nomination {
-      border: 1px solid var(--line);
-      background: #fff;
-      padding: 10px;
-      display: grid;
-      gap: 8px;
-    }
-    .nomination-head { display: flex; justify-content: space-between; gap: 10px; }
-    .tiers {
-      height: 300px;
-      display: grid;
-      grid-template-columns: .9fr 1fr 1.1fr;
-      border: 1px solid var(--line);
-      overflow: hidden;
-      background: #fff;
-    }
-    .tier { overflow-y: auto; border-right: 1px solid var(--line); }
-    .tier:last-child { border-right: 0; }
-    .tier button {
-      width: 100%;
-      text-align: left;
-      background: #fff;
-      padding: 12px 10px;
-      border-bottom: 1px solid rgba(217,209,195,.65);
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 760;
-    }
-    .tier button.active { background: var(--paper-2); color: var(--ink); border-left: 4px solid var(--gold); }
-    .result-list { display: grid; gap: 8px; }
-    .result-list button {
-      width: 100%;
-      text-align: left;
-      background: #fff;
-      border: 1px solid var(--line);
-      padding: 10px;
-      display: grid;
-      gap: 2px;
-    }
-    .confirm, .cert { background: var(--paper); }
-    .summary {
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      background: #fff;
-      padding: 16px 20px;
-      display: grid;
-      gap: 12px;
-    }
-    .metric-grid { display: grid; gap: 10px; }
-    .metric {
-      border: 1px solid var(--line);
-      padding: 12px;
-      background: #fffdf9;
-      display: grid;
-      gap: 4px;
-    }
-    .metric b { font-size: 24px; }
-    .metric span { font-size: 11px; color: var(--muted); font-weight: 760; }
-    .review-metrics {
-      border: 1px solid var(--line);
-      background: #fff;
-      display: grid;
-      grid-template-columns: 1fr 1.25fr;
-      overflow: hidden;
-    }
-    .review-total {
-      padding: 14px;
-      background: #fffdf9;
-      border-right: 1px solid var(--line);
-      display: grid;
-      align-content: center;
-      gap: 3px;
-    }
-    .review-total b { font-size: 30px; line-height: 1; }
-    .review-total span, .review-breakdown span { font-size: 11px; color: var(--muted); font-weight: 760; }
-    .review-breakdown {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    .review-side {
-      padding: 14px 12px;
-      display: grid;
-      align-content: center;
-      gap: 4px;
-    }
-    .review-side + .review-side { border-left: 1px solid var(--line); }
-    .review-side b { font-size: 22px; }
-    .audit-list {
-      border: 1px solid var(--line);
-      background: #fff;
-      display: grid;
-      gap: 0;
-      max-height: 220px;
-      overflow-y: auto;
-    }
-    .audit-row {
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(217,209,195,.72);
-      display: grid;
-      gap: 4px;
-      font-size: 12px;
-    }
-    .audit-row:last-child { border-bottom: 0; }
-    .audit-row strong { font-size: 13px; }
-    .footer-actions {
-      margin-top: auto;
-      padding: 10px 12px calc(env(safe-area-inset-bottom, 0px) + 10px);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      border-top: 1px solid var(--line);
-      flex: 0 0 auto;
-    }
-    .receipt {
-      margin: 18px;
-      padding: 16px;
-      background: #fff;
-      border: 1px solid var(--gold);
-      display: grid;
-      gap: 12px;
-    }
-    .receipt-row { display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 13px; border-bottom: 1px solid rgba(217,209,195,.7); padding-bottom: 8px; }
-    .receipt-row span:first-child { color: var(--muted); font-weight: 760; }
-    .toast {
-      position: absolute;
-      left: 50%;
-      top: calc(env(safe-area-inset-top, 0px) + 12px);
-      transform: translate(-50%, -8px);
-      max-width: 82%;
-      background: #121212;
-      color: #fff;
-      padding: 10px 12px;
-      font-size: 12px;
-      line-height: 1.35;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 120;
-      transition: opacity .2s ease, transform .2s ease;
-      box-shadow: 0 12px 30px rgba(0,0,0,.22);
-    }
-    .toast.show { opacity: 1; transform: translate(-50%, 0); }
-    .cert > .screen-pad:last-child { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); }
+  /* —— 原生 select 灰度 + 自定义箭头 —— */
+  select { appearance: none; -webkit-appearance: none; padding-right: 32px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; background-size: 14px; }
+  .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .choice {
+    border: 1px solid #e5e7eb; border-radius: 12px; background: #ffffff;
+    padding: 12px 10px; text-align: left; display: grid; gap: 3px;
+    transition: background .16s ease, border-color .16s ease, transform .16s ease;
+  }
+  .choice strong { font-size: 13px; color: #111827; }
+  .choice span { font-size: 11px; color: #6b7280; }
+  .choice:hover { background: #f9fafb; border-color: #d1d5db; }
+  .choice.active { border-color: #111827; background: #111827; transform: translateY(-1px); }
+  .choice.active strong { color: #fff; }
+  .choice.active span { color: #d1d5db; }
 
-    @media (max-width: 520px) {
-      .device {
-        width: 100vw;
-        height: var(--app-height);
-        min-height: 0;
-      }
-      .bottom-bar { grid-template-columns: 88px 1fr 110px; }
-    }
-  </style>
+  /* —— 按钮 —— */
+  .primary, .secondary, .ghost, .danger {
+    min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 0 14px; font-weight: 700; font-size: 13px; border-radius: 12px;
+    transition: transform .16s ease, background .16s ease, border-color .16s ease; line-height: 1.2;
+  }
+  .primary { background: #111827; color: #fff; }
+  .primary:hover:not(:disabled) { background: #1f2937; transform: translateY(-1px); }
+  .secondary { background: #f3f4f6; border: 1px solid #e5e7eb; color: #111827; }
+  .secondary:hover:not(:disabled) { background: #e5e7eb; }
+  .ghost { background: transparent; border: 1px solid #d1d5db; color: #374151; }
+  .ghost:hover:not(:disabled) { background: #f3f4f6; }
+  .danger { background: #ffffff; border: 1px solid #d1d5db; color: #4b5563; min-height: 32px; font-size: 12px; padding: 0 10px; gap: 5px; border-radius: 8px; }
+  .danger:hover:not(:disabled) { background: #f3f4f6; color: #111827; }
+  .primary:active, .secondary:active, .ghost:active, .choice:active { transform: scale(.98); }
+
+  /* —— 餐厅列表页 —— */
+  .board, .confirm { background: #f9fafb; }
+  .city-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 16px 12px; border-bottom: 1px solid #f3f4f6; background: #ffffff;
+  }
+  .city-label { display: grid; gap: 2px; min-width: 0; }
+  .city-label strong { font-size: 15px; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .filters { display: grid; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #f3f4f6; background: #ffffff; }
+  .filter-line { display: grid; grid-template-columns: 1fr 132px; gap: 8px; }
+  .searchbar { display: flex; align-items: center; gap: 8px; background: #f3f4f6; border-radius: 9999px; padding: 0 14px; height: 44px; }
+  .searchbar > i { color: #9ca3af; }
+  .searchbar input { border: 0; background: transparent; border-radius: 0; padding: 0; flex: 1; height: 100%; }
+  .searchbar input:focus { box-shadow: none; }
+  .pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+  .pill {
+    flex: 0 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff;
+    padding: 7px 10px; font-size: 12px; font-weight: 600; color: #4b5563; white-space: nowrap;
+    transition: background .16s ease, color .16s ease, border-color .16s ease;
+  }
+  .pill:hover { background: #f9fafb; }
+  .pill.active { background: #111827; color: #fff; border-color: #111827; }
+
+  .list-wrap { flex: 1; overflow-y: auto; padding: 14px; display: grid; align-content: start; gap: 10px; }
+  .restaurant {
+    display: grid; grid-template-columns: 64px minmax(0,1fr) 84px; gap: 12px; align-items: center;
+    padding: 12px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px;
+    text-align: left; width: 100%; color: #111827;
+    transition: border-color .16s ease;
+  }
+  .restaurant:hover { border-color: #9ca3af; }
+  .thumb { height: 64px; border-radius: 8px; background: #e5e7eb; display: grid; place-items: center; color: #9ca3af; }
+  .rest-body { min-width: 0; display: grid; gap: 6px; }
+  .rest-title { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  .rest-title strong { font-size: 14px; line-height: 1.25; color: #111827;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .meta { font-size: 11px; color: #6b7280; line-height: 1.35; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .tag, .tag-rating { padding: 4px 8px; font-size: 10px; font-weight: 600; color: #4b5563; border-radius: 4px; background: #f3f4f6; }
+  .tag-active { padding: 4px 8px; font-size: 10px; font-weight: 700; color: #fff; border-radius: 4px; background: #111827; }
+  .tag-outline { padding: 3px 7px; font-size: 10px; font-weight: 600; color: #4b5563; border-radius: 4px; border: 1px solid #d1d5db; background: transparent; }
+  .rest-action {
+    align-self: center; white-space: nowrap; min-height: 40px; width: 84px; padding: 0 6px;
+    font-size: 12px; font-weight: 700; border-radius: 8px; background: #f3f4f6; color: #111827;
+    border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; line-height: 1.15;
+  }
+  .rest-action:hover { background: #e5e7eb; }
+  .rest-action:active { transform: scale(.97); }
+  .empty { border: 1px dashed #d1d5db; background: #ffffff; padding: 30px 16px; text-align: center; color: #6b7280; font-size: 13px; border-radius: 12px; display: grid; gap: 8px; justify-items: center; }
+
+  .bottom-bar {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center;
+    padding: 10px 12px calc(env(safe-area-inset-bottom, 0px) + 10px);
+    border-top: 1px solid #f3f4f6; background: #ffffff; flex: 0 0 auto;
+  }
+  .progress { text-align: center; display: grid; gap: 2px; font-size: 11px; color: #6b7280; min-width: 0; }
+  .progress strong { font-size: 13px; color: #111827; }
+
+  /* —— 抽屉 —— */
+  .overlay { position: absolute; inset: 0; z-index: 80; display: flex; align-items: flex-end;
+    background: rgba(17,24,39,.4); backdrop-filter: blur(2px);
+    opacity: 0; pointer-events: none; transition: opacity .22s ease; }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+  .sheet { width: 100%; max-height: 90%; background: #ffffff; border-radius: 16px 16px 0 0;
+    box-shadow: 0 -10px 30px rgba(0,0,0,.12); transform: translateY(100%);
+    transition: transform .3s cubic-bezier(.16,1,.3,1); display: flex; flex-direction: column; }
+  .overlay.open .sheet { transform: translateY(0); }
+  .sheet-handle { width: 40px; height: 5px; background: #e5e7eb; border-radius: 9999px; margin: 10px auto 0; }
+  .sheet-head { padding: 10px 16px 12px; border-bottom: 1px solid #f3f4f6;
+    display: flex; justify-content: space-between; gap: 12px; align-items: start; background: #ffffff; }
+  .sheet-head .title { color: #111827; }
+  .sheet-head .sub { color: #6b7280; }
+  .sheet-body { padding: 14px; overflow-y: auto; display: grid; gap: 14px; }
+  .x { width: 34px; height: 34px; background: #f3f4f6; color: #6b7280; border: 0; border-radius: 8px; display: grid; place-items: center; flex: 0 0 auto; }
+  .x:hover { background: #e5e7eb; color: #111827; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .checklist { border: 1px solid #f3f4f6; border-radius: 12px; background: #f9fafb; padding: 12px; display: grid; gap: 8px; font-size: 12px; color: #4b5563; }
+  .checklist .item { display: flex; align-items: center; gap: 8px; }
+  .checklist .item > i { flex: 0 0 auto; }
+  .ok { color: #111827; font-weight: 700; }
+  .bad { color: #DC2626; font-weight: 700; }
+  .bad > i { color: #DC2626; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .nomination { border: 1px solid #e5e7eb; border-radius: 12px; background: #ffffff; padding: 12px; display: grid; gap: 8px; }
+  .nomination-head { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+  .nomination-head strong { font-size: 13px; color: #111827; }
+
+  /* —— 城市三级 —— */
+  .tiers { height: 300px; display: grid; grid-template-columns: .9fr 1fr 1.1fr; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: #ffffff; }
+  .tier { overflow-y: auto; border-right: 1px solid #f3f4f6; }
+  .tier:last-child { border-right: 0; }
+  .tier button { width: 100%; text-align: left; background: #ffffff; padding: 12px 10px; border: 0; border-bottom: 1px solid #f3f4f6; color: #6b7280; font-size: 12px; font-weight: 600; border-left: 3px solid transparent; }
+  .tier button:hover { background: #f9fafb; }
+  .tier button.active { background: #f3f4f6; color: #111827; font-weight: 700; border-left-color: #111827; }
+  .result-list { display: grid; gap: 8px; }
+  .result-list button { width: 100%; text-align: left; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 14px; display: grid; gap: 2px; }
+  .result-list button:hover { background: #f9fafb; }
+  .result-list button strong { font-size: 13px; color: #111827; }
+
+  /* —— 确认页 —— */
+  .confirm .scroll-area { flex: 1; overflow-y: auto; display: grid; gap: 16px; }
+  .summary { border: 1px solid #e5e7eb; border-radius: 12px; background: #ffffff; padding: 14px 16px; display: grid; gap: 10px; }
+  .summary .eyebrow { color: #111827; }
+  .confirm-review-card { border: 1px solid #e5e7eb; background: #ffffff; display: grid; grid-template-columns: 1fr 1.25fr; overflow: hidden; border-radius: 12px; }
+  .review-total { padding: 16px; background: #f9fafb; border-right: 1px solid #f3f4f6; display: grid; align-content: center; gap: 3px; }
+  .review-total b { font-size: 30px; line-height: 1; color: #111827; font-weight: 800; }
+  .review-breakdown { display: grid; grid-template-columns: 1fr 1fr; }
+  .review-side { padding: 16px 12px; display: grid; align-content: center; gap: 4px; }
+  .review-side + .review-side { border-left: 1px solid #f3f4f6; }
+  .review-side b { font-size: 22px; color: #111827; font-weight: 800; }
+  .review-total span, .review-side span { font-size: 11px; color: #6b7280; font-weight: 600; }
+  .formula { font-size: 11px; color: #9ca3af; line-height: 1.5; }
+  .audit-list { border: 1px solid #e5e7eb; background: #ffffff; display: grid; gap: 0; max-height: 320px; overflow-y: auto; border-radius: 12px; }
+  .audit-row { padding: 12px 14px; border-bottom: 1px solid #f3f4f6; display: grid; gap: 4px; font-size: 12px; color: #4b5563; }
+  .audit-row:last-child { border-bottom: 0; }
+  .audit-row strong { font-size: 13px; color: #111827; }
+  .audit-row .meta { font-size: 11px; color: #6b7280; }
+  .audit-row .delta { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .footer-actions { margin-top: auto; padding: 10px 12px calc(env(safe-area-inset-bottom, 0px) + 10px); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid #f3f4f6; background: #ffffff; flex: 0 0 auto; }
+
+  /* —— 完成页 —— */
+  .cert { background: #f9fafb; }
+  .receipt { margin: 16px; padding: 16px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.05); display: grid; gap: 12px; }
+  .receipt-row { display: grid; grid-template-columns: 96px 1fr; gap: 10px; font-size: 13px; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px; }
+  .receipt-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .receipt-row span:first-child { color: #6b7280; font-weight: 600; }
+  .receipt-row strong { color: #111827; font-weight: 700; word-break: break-word; }
+  .cert .scroll-pad { flex: 1; overflow-y: auto; }
+
+  /* —— Toast —— */
+  .toast { position: absolute; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 14px); transform: translate(-50%, -8px); max-width: 84%;
+    background: #1f2937; color: #fff; padding: 10px 14px; font-size: 12px; line-height: 1.35; border-radius: 9999px;
+    display: flex; align-items: center; gap: 6px;
+    opacity: 0; pointer-events: none; z-index: 120; transition: opacity .2s ease, transform .2s ease; box-shadow: 0 6px 16px rgba(0,0,0,.18); }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  .list-wrap::-webkit-scrollbar, .sheet-body::-webkit-scrollbar, .audit-list::-webkit-scrollbar, .tier::-webkit-scrollbar, .pills::-webkit-scrollbar { width: 4px; height: 4px; }
+  .list-wrap::-webkit-scrollbar-thumb, .sheet-body::-webkit-scrollbar-thumb, .audit-list::-webkit-scrollbar-thumb, .tier::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+
+  @media (max-width: 520px) { .device { width: 100vw; box-shadow: none; } }
+</style>
 </head>
 <body>
-  <main class="device" aria-label="2027 携程美食林理事终审投票页">
-    <div class="toast" id="toast"></div>
-    <section class="app">
-      <div class="stage gateway active" id="stage-login">
-        <div class="topbar">
-          <div class="brand">
-            <div class="seal">GL</div>
-            <div>
-              <p class="eyebrow" data-i18n="portal">Expert Council Portal</p>
-            </div>
-          </div>
-          <button class="lang" id="lang-login" aria-label="Switch language">EN</button>
+<main class="device">
+  <section class="app">
+
+    <div class="toast" id="toast"><i data-lucide="check" class="w-4 h-4" aria-hidden="true"></i><span id="toast-text"></span></div>
+
+    <!-- ============ 身份填写页 ============ -->
+    <div class="stage gateway active" id="stage-login">
+      <div class="topbar">
+        <div class="brand">
+          <div class="seal"><i data-lucide="utensils" class="w-5 h-5" aria-hidden="true"></i></div>
+          <div><p class="eyebrow" data-i18n="portal">2027年美食林高端榜单评审</p></div>
         </div>
-        <div class="hero-mark screen-pad">
-          <div class="hero-seal">林</div>
-          <p class="eyebrow" data-i18n="year">年度终审通道</p>
-          <h2 class="title" data-i18n="loginHeadline">理事投票与专家终审工作台</h2>
-          <p class="sub" data-i18n="loginSub">用于年度榜单最终审议、补充提名、电子签署与结果存根。</p>
+        <button class="lang" id="lang-login" aria-label="切换语言">英</button>
+      </div>
+      <div class="hero-mark screen-pad">
+        <div class="hero-seal"><i data-lucide="utensils" class="w-10 h-10" aria-hidden="true"></i></div>
+        <p class="eyebrow" data-i18n="year">年度终审通道</p>
+        <h2 class="title" data-i18n="loginHeadline">理事投票与专家终审工作台</h2>
+        <p class="sub" data-i18n="loginSub">用于年度榜单最终审议、补充提名、电子签署与结果存根。</p>
+      </div>
+      <div class="form-surface">
+        <div class="field underline">
+          <label for="expert-name" data-i18n="nameLabel">评审专家姓名</label>
+          <input id="expert-name" autocomplete="name" placeholder="请输入真实姓名 / 拼音">
         </div>
-        <div class="form-surface">
-          <div class="field">
-            <label for="expert-name" data-i18n="nameLabel">评审专家姓名</label>
-            <input id="expert-name" autocomplete="name" placeholder="请输入真实姓名 / 拼音">
+        <div class="field">
+          <label data-i18n="roleLabel">选择评审席位</label>
+          <div class="role-grid">
+            <button type="button" class="choice" data-role="BOARD_MEMBER"><strong data-i18n="roleBoard">理事会成员</strong><span data-i18n="roleBoardSub">理事席位</span></button>
+            <button type="button" class="choice" data-role="CONSULTANT"><strong data-i18n="roleConsultant">特邀顾问</strong><span data-i18n="roleConsultantSub">顾问席位</span></button>
           </div>
-          <div class="field">
-            <label data-i18n="roleLabel">选择评审席位</label>
-            <div class="role-grid">
-              <button class="choice" data-role="BOARD_MEMBER"><strong data-i18n="roleBoard">理事会成员</strong><span data-i18n="roleBoardSub">理事席位</span></button>
-              <button class="choice" data-role="CONSULTANT"><strong data-i18n="roleConsultant">特邀顾问</strong><span data-i18n="roleConsultantSub">顾问席位</span></button>
-            </div>
+        </div>
+        <button type="button" class="primary" id="enter" disabled data-i18n="enter">开始评审</button>
+      </div>
+    </div>
+
+    <!-- ============ 餐厅列表页 ============ -->
+    <div class="stage board" id="stage-board">
+      <div class="topbar">
+        <div class="brand">
+          <div class="seal"><i data-lucide="utensils" class="w-5 h-5" aria-hidden="true"></i></div>
+          <div>
+            <p class="eyebrow" data-i18n="boardKicker">2027年美食林高端榜单评审</p>
+            <h2 class="title" data-i18n="boardTitle">待评审餐厅</h2>
           </div>
-          <button class="primary" id="enter" disabled data-i18n="enter">开始评审</button>
+        </div>
+        <button class="lang" id="lang-board" aria-label="切换语言">英</button>
+      </div>
+      <div class="city-row">
+        <div class="city-label">
+          <span class="sub" data-i18n="currentCity">当前评审城市</span>
+          <strong id="city-label">中国 · 上海</strong>
+        </div>
+        <button type="button" class="secondary" id="open-city" data-i18n="switchCity">切换城市</button>
+      </div>
+      <div class="filters">
+        <div class="filter-line">
+          <div class="searchbar"><i data-lucide="search" class="w-4 h-4" aria-hidden="true"></i><input id="search" data-i18n-ph="searchPh" placeholder="搜索商户、菜系、城市"></div>
+          <select id="rating-filter" aria-label="筛选评级"></select>
+        </div>
+        <div class="pills" id="state-pills"></div>
+      </div>
+      <div class="list-wrap" id="restaurant-list"></div>
+      <div class="bottom-bar">
+        <button type="button" class="secondary" id="open-add" data-i18n="addNomination">增补</button>
+        <div class="progress">
+          <span data-i18n="progress">当前站点统计</span>
+          <strong id="progress-label">增补 0 · 已评 0</strong>
+        </div>
+        <button type="button" class="primary" id="submit-board" disabled data-i18n="submitBoard">终审落库</button>
+      </div>
+    </div>
+
+    <!-- ============ 评审确认页 ============ -->
+    <div class="stage confirm" id="stage-confirm">
+      <div class="topbar">
+        <div class="brand">
+          <div class="seal"><i data-lucide="clipboard-check" class="w-5 h-5" aria-hidden="true"></i></div>
+          <div>
+            <p class="eyebrow" data-i18n="confirmKicker">终审确认</p>
+            <h2 class="title" data-i18n="confirmTitle">提交前复核</h2>
+          </div>
         </div>
       </div>
-
-      <div class="stage board" id="stage-board">
-        <div class="topbar">
-          <div class="brand">
-            <div class="seal">GL</div>
-            <div>
-              <p class="eyebrow" data-i18n="boardKicker">2027年美食林高端榜单评审</p>
-              <h2 class="title" data-i18n="boardTitle">待评审餐厅</h2>
-            </div>
-          </div>
-          <button class="lang" id="lang-board" aria-label="Switch language">EN</button>
+      <div class="scroll-area screen-pad">
+        <p class="sub" data-i18n="confirmSub">请核对本城市审议结果，可补充整体意见后提交。</p>
+        <div id="confirm-metrics"></div>
+        <div class="summary">
+          <p class="eyebrow" id="audit-title" data-i18n="auditTitle">提交前复核</p>
+          <div class="audit-list" id="confirm-audit"></div>
         </div>
-        <div class="city-row">
-          <div class="city-label">
-            <span class="sub" data-i18n="currentCity">当前评审城市</span>
-            <strong id="city-label">中国 · 上海</strong>
-          </div>
-          <button class="secondary" id="open-city" data-i18n="switchCity">切换城市</button>
-        </div>
-        <div class="filters">
-          <div class="filter-line">
-            <input id="search" placeholder="搜索商户、菜系、城市">
-            <select id="rating-filter"></select>
-          </div>
-          <div class="pills" id="state-pills"></div>
-        </div>
-        <div class="list-wrap" id="restaurant-list"></div>
-        <div class="bottom-bar">
-          <button class="secondary" id="open-add" data-i18n="addNomination">增补</button>
-          <div class="progress"><span data-i18n="progress">当前站点统计</span><strong id="progress-label">增补 0 | 已评 0</strong></div>
-          <button class="primary" id="submit-board" disabled data-i18n="submitBoard">终审落库</button>
+        <div class="field">
+          <label for="final-opinion" data-i18n="opinionLabel">总体评审意见与寄语（可选）</label>
+          <textarea id="final-opinion" rows="6" data-i18n-ph="opinionPh" placeholder="可填写对本大区餐饮趋势、榜单结构或评审建议的总体意见。"></textarea>
         </div>
       </div>
+      <div class="footer-actions">
+        <button type="button" class="secondary" id="back-board" data-i18n="backEdit">返回修改</button>
+        <button type="button" class="primary" id="final-sign" data-i18n="finalSign">确认签署</button>
+      </div>
+    </div>
 
-      <div class="stage confirm" id="stage-confirm">
-        <div class="topbar">
-          <div class="brand">
-            <div class="seal">签</div>
-            <div>
-              <p class="eyebrow" data-i18n="confirmKicker">终审确认</p>
-              <h2 class="title" data-i18n="confirmTitle">终审结论确认</h2>
-            </div>
+    <!-- ============ 提交完成页 ============ -->
+    <div class="stage cert" id="stage-cert">
+      <div class="topbar">
+        <div class="brand">
+          <div class="seal"><i data-lucide="check" class="w-5 h-5" aria-hidden="true"></i></div>
+          <div>
+            <p class="eyebrow" data-i18n="certKicker">提交完成</p>
+            <h2 class="title" data-i18n="certTitle">提交完成</h2>
           </div>
-        </div>
-        <div class="screen-pad" style="display:grid;gap:16px;overflow-y:auto;">
-          <p class="sub" data-i18n="confirmSub">请核对本城市审议结果，可补充整体意见后进行电子签署。</p>
-          <div class="metric-grid" id="confirm-metrics"></div>
-          <div class="summary">
-            <p class="eyebrow" id="audit-title">提交前复核</p>
-            <div class="audit-list" id="confirm-audit"></div>
-          </div>
-          <div class="field">
-            <label for="final-opinion" data-i18n="opinionLabel">总体评审意见与寄语（可选）</label>
-            <textarea id="final-opinion" rows="7" placeholder="可填写对本大区餐饮趋势、榜单结构或评审建议的总体意见。"></textarea>
-          </div>
-        </div>
-        <div class="footer-actions">
-          <button class="secondary" id="back-board" data-i18n="backEdit">返回修改</button>
-          <button class="primary" id="final-sign" data-i18n="finalSign">确认签署</button>
         </div>
       </div>
-
-      <div class="stage cert" id="stage-cert">
-        <div class="topbar">
-          <div class="brand">
-            <div class="seal">✓</div>
-            <div>
-              <p class="eyebrow" data-i18n="certKicker">提交完成</p>
-              <h2 class="title" data-i18n="certTitle">终审意见已提交</h2>
-            </div>
-          </div>
-        </div>
+      <div class="scroll-pad">
         <div class="receipt" id="receipt"></div>
-        <p class="sub screen-pad" id="thanks-note"></p>
-        <div class="screen-pad" style="display:grid;gap:10px;margin-top:auto;">
-          <button class="primary" id="copy-receipt" data-i18n="copyReceipt">复制签署存根</button>
-          <button class="secondary" id="reset" data-i18n="reset">模拟下一位评委</button>
+        <p class="sub screen-pad" id="thanks-note" style="padding-top:0;"></p>
+        <div class="screen-pad" style="display:grid;gap:10px;">
+          <button type="button" class="primary" id="copy-receipt" data-i18n="copyReceipt">复制签署存根</button>
+          <button type="button" class="secondary" id="reset" data-i18n="reset">模拟下一位评委</button>
         </div>
       </div>
+    </div>
 
-      <div class="overlay" id="city-sheet">
-        <div class="sheet">
-          <div class="sheet-head">
-            <div><p class="eyebrow" data-i18n="cityKicker">评审站点</p><h3 class="title" data-i18n="cityTitle">选择评审站点</h3></div>
-            <button class="x" data-close="city-sheet">×</button>
+    <!-- ============ 城市抽屉 ============ -->
+    <div class="overlay" id="city-sheet">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head">
+          <div>
+            <p class="eyebrow" data-i18n="cityKicker">评审站点</p>
+            <h3 class="title" data-i18n="cityTitle">选择评审站点</h3>
           </div>
-          <div class="sheet-body">
-            <input id="city-search" placeholder="输入北京 / Kyoto / China">
-            <div class="tiers" id="city-tiers"></div>
-            <div class="result-list" id="city-results" hidden></div>
+          <button class="x" data-close="city-sheet" aria-label="关闭"><i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i></button>
+        </div>
+        <div class="sheet-body">
+          <div class="searchbar"><i data-lucide="search" class="w-4 h-4" aria-hidden="true"></i><input id="city-search" data-i18n-ph="citySearchPh" placeholder="输入北京 / Kyoto / China"></div>
+          <div class="tiers" id="city-tiers"></div>
+          <div class="result-list" id="city-results" hidden></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 评审抽屉 ============ -->
+    <div class="overlay" id="decision-sheet">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head">
+          <div>
+            <p class="eyebrow" id="desk-rating">餐厅评审</p>
+            <h3 class="title" id="desk-name">餐厅</h3>
+            <p class="sub" id="desk-meta"></p>
+          </div>
+          <button class="x" data-close="decision-sheet" aria-label="关闭"><i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i></button>
+        </div>
+        <div class="sheet-body" id="decision-body"></div>
+      </div>
+    </div>
+
+    <!-- ============ 增补抽屉 ============ -->
+    <div class="overlay" id="add-sheet">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head">
+          <div>
+            <p class="eyebrow" data-i18n="addKicker">增补提名</p>
+            <h3 class="title" data-i18n="addTitle">提请增补商户</h3>
+          </div>
+          <button class="x" data-close="add-sheet" aria-label="关闭"><i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i></button>
+        </div>
+        <div class="sheet-body">
+          <div class="field"><label data-i18n="addName">商户名称</label><input id="nom-name" data-i18n-ph="addNamePh" placeholder="请输入商户全名"></div>
+          <div class="two">
+            <div class="field"><label data-i18n="addCountry">国家</label><input id="nom-country" data-i18n-ph="addCountryPh" placeholder="如 日本"></div>
+            <div class="field"><label data-i18n="addCity">城市</label><input id="nom-city" data-i18n-ph="addCityPh" placeholder="如 京都"></div>
+          </div>
+          <div class="field">
+            <label data-i18n="addReason">评定依据（不少于15字）</label>
+            <textarea id="nom-reason" rows="4" data-i18n-ph="addReasonPh" placeholder="请说明该商户的学术推荐理由。"></textarea>
+          </div>
+          <div class="checklist" id="nom-check"></div>
+          <button type="button" class="primary" id="save-nom" disabled data-i18n="saveNom">保存增补提名</button>
+          <div class="summary">
+            <p class="eyebrow" data-i18n="savedNoms">已保存增补名单</p>
+            <div id="nom-list"></div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="overlay" id="decision-sheet">
-        <div class="sheet">
-          <div class="sheet-head">
-            <div><p class="eyebrow" id="desk-rating">餐厅评审</p><h3 class="title" id="desk-name">餐厅</h3><p class="sub" id="desk-meta"></p></div>
-            <button class="x" data-close="decision-sheet">×</button>
-          </div>
-          <div class="sheet-body" id="decision-body"></div>
-        </div>
-      </div>
+  </section>
+</main>
 
-      <div class="overlay" id="add-sheet">
-        <div class="sheet">
-          <div class="sheet-head">
-            <div><p class="eyebrow" data-i18n="addKicker">增补提名</p><h3 class="title" data-i18n="addTitle">提请增补商户</h3></div>
-            <button class="x" data-close="add-sheet">×</button>
-          </div>
-          <div class="sheet-body">
-            <div class="field"><label data-i18n="addName">商户名称</label><input id="nom-name"></div>
-            <div class="two">
-              <div class="field"><label data-i18n="addCountry">国家</label><input id="nom-country"></div>
-              <div class="field"><label data-i18n="addCity">城市</label><input id="nom-city"></div>
-            </div>
-            <div class="field">
-              <label data-i18n="addReason">学术推荐理由（不少于15字）</label>
-              <textarea id="nom-reason" rows="4"></textarea>
-            </div>
-            <div class="checklist" id="nom-check"></div>
-            <button class="primary" id="save-nom" disabled data-i18n="saveNom">保存增补提名</button>
-            <div class="summary">
-              <p class="eyebrow" data-i18n="savedNoms">已保存增补名单</p>
-              <div id="nom-list"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
+<script>
+(function () {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const html = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  <script>
-    const dict = {
-      zh: {
-        portal: "2027年美食林高端榜单评审", year: "年度终审通道",
-        loginHeadline: "理事投票与专家终审工作台", loginSub: "用于年度榜单最终审议、补充提名、电子签署与结果存根。",
-        nameLabel: "评审专家姓名", roleLabel: "选择评审席位", roleBoard: "理事会成员", roleConsultant: "特邀顾问",
-        roleBoardSub: "理事席位", roleConsultantSub: "顾问席位",
-        enter: "开始评审", boardKicker: "2027年美食林高端榜单评审", boardTitle: "待评审餐厅",
-        currentCity: "当前评审城市", switchCity: "切换城市", addNomination: "增补", progress: "当前站点统计",
-        submitBoard: "终审落库", confirmKicker: "终审确认", confirmTitle: "终审结论确认",
-        confirmSub: "请核对本城市审议结果，可补充整体意见后进行电子签署。", opinionLabel: "总体评审意见与寄语（可选）",
-        backEdit: "返回修改", finalSign: "确认签署", certKicker: "提交完成", certTitle: "终审意见已提交",
-        copyReceipt: "复制提交存根", reset: "模拟下一位评委", cityKicker: "评审站点", cityTitle: "选择评审站点",
-        addKicker: "增补提名", addTitle: "提请增补商户", addName: "商户名称", addCountry: "国家",
-        addCity: "城市", addReason: "学术推荐理由（不少于15字）", saveNom: "保存增补提名", savedNoms: "已保存增补名单",
-        allRatings: "全部等级", all: "全部", pending: "待审", agreed: "保持现有评级", adjusted: "建议调整评级",
-        reviewed: "已评", nominations: "增补", empty: "当前筛选条件下没有商户。", open: "开始评审",
-        keep: "保持现有评级", adjust: "建议调整评级", target: "拟调整目标等级", reason: "评定依据（不少于15字）",
-        saveDecision: "保存审议结果", removed: "移出榜单", citySearchEmpty: "没有匹配城市。",
-        copied: "签署数据存根已复制。", loginReady: "身份验证通过，已进入审议工作台。", savedDecision: "审议结果已保存。",
-        savedNom: "增补提名已保存。", needOne: "至少完成 1 条审议或 1 条增补后才可终审落库。",
-        noOpinion: "未填写总体评审意见。", quickAgree: "开始评审", startReview: "开始评审", auditTitle: "提交前复核",
-        auditEmpty: "当前城市暂无调整或增补明细。", adjustmentDetail: "调整明细", nominationDetail: "增补餐厅",
-        thanksNote: "感谢您完成本轮高端榜单评审提交。您的专业判断将进入组委会复核流程，用于支持年度榜单的最终发布。",
-        reviewedGroup: "已评餐厅", keepCount: "保持现有评级", adjustCount: "建议调整评级"
-      },
-      en: {
-        portal: "2027 Gourmet List Premium Review", year: "Annual Final Review",
-        loginHeadline: "Council Voting and Final Review", loginSub: "For final decisions, supplementary nominations, e-signature and receipt archive.",
-        nameLabel: "Expert name", roleLabel: "Review role", roleBoard: "Board Member", roleConsultant: "Consultant",
-        roleBoardSub: "Council seat", roleConsultantSub: "Advisor seat",
-        enter: "Start Review", boardKicker: "2027 Gourmet List Premium Review", boardTitle: "Restaurants to Review",
-        currentCity: "Review city", switchCity: "Switch City", addNomination: "Nominate", progress: "Station progress",
-        submitBoard: "Submit", confirmKicker: "Final Verification", confirmTitle: "Confirm Conclusions",
-        confirmSub: "Review this city's results, add optional remarks, then e-sign.", opinionLabel: "Overall remarks (optional)",
-        backEdit: "Back to edit", finalSign: "E-sign", certKicker: "Secure Receipt", certTitle: "Review Submitted",
-        copyReceipt: "Copy receipt", reset: "Next judge", cityKicker: "Spatial Selector", cityTitle: "Select Review Station",
-        addKicker: "Supplementary Nomination", addTitle: "Submit Nomination", addName: "Merchant name", addCountry: "Country",
-        addCity: "City", addReason: "Professional reason (15+ chars)", saveNom: "Save nomination", savedNoms: "Saved nominations",
-        allRatings: "All ratings", all: "All", pending: "Pending", agreed: "Agreed", adjusted: "Adjusted",
-        reviewed: "Reviewed", nominations: "Nominations", empty: "No merchants match this filter.", open: "Start Review",
-        keep: "Keep original rating", adjust: "Suggest adjustment", target: "Target rating", reason: "Professional rationale (15+ chars)",
-        saveDecision: "Save decision", removed: "Remove from list", citySearchEmpty: "No city matched.",
-        copied: "Signed receipt copied.", loginReady: "Identity verified. Workspace unlocked.", savedDecision: "Decision saved.",
-        savedNom: "Supplementary nomination saved.", needOne: "Submit unlocks after one decision or one nomination.",
-        noOpinion: "No overall remarks.", quickAgree: "Start Review", startReview: "Start Review", auditTitle: "Pre-submit Review",
-        auditEmpty: "No adjustments or nominations in this city.", adjustmentDetail: "Adjustment", nominationDetail: "Nominated Restaurant",
-        thanksNote: "Thank you for submitting this premium list review. Your professional judgment will enter the committee review workflow and support the final annual list release.",
-        reviewedGroup: "Reviewed restaurants", keepCount: "Keep original rating", adjustCount: "Suggested adjustments"
-      }
-    };
+  const ratings = ["BLACK_DIAMOND", "DIAMOND", "PLATINUM"];
+  const ratingText = {
+    zh: { BLACK_DIAMOND: "黑钻", DIAMOND: "钻石", PLATINUM: "铂金", REMOVED: "取消入选" },
+    en: { BLACK_DIAMOND: "Black Diamond", DIAMOND: "Diamond", PLATINUM: "Platinum", REMOVED: "Removed" }
+  };
 
-    const ratings = ["BLACK_DIAMOND", "DIAMOND", "PLATINUM"];
-    const ratingText = {
-      zh: { BLACK_DIAMOND: "黑钻", DIAMOND: "钻石", PLATINUM: "铂金", REMOVED: "移出榜单" },
-      en: { BLACK_DIAMOND: "Black Diamond", DIAMOND: "Diamond", PLATINUM: "Platinum", REMOVED: "Removed" }
-    };
-    const spatial = {
-      ASIA: { zh: "亚洲", en: "Asia", countries: {
-        CN: { zh: "中国", en: "China", cities: ["上海", "北京", "成都", "广州", "香港"] },
-        JP: { zh: "日本", en: "Japan", cities: ["东京", "京都", "大阪"] },
-        SG: { zh: "新加坡", en: "Singapore", cities: ["新加坡"] }
-      }},
-      EUROPE: { zh: "欧洲", en: "Europe", countries: {
-        FR: { zh: "法国", en: "France", cities: ["巴黎", "里昂"] },
-        UK: { zh: "英国", en: "United Kingdom", cities: ["伦敦"] },
-        IT: { zh: "意大利", en: "Italy", cities: ["米兰", "罗马"] }
-      }},
-      AMERICA: { zh: "北美", en: "North America", countries: {
-        US: { zh: "美国", en: "United States", cities: ["纽约", "旧金山", "洛杉矶"] },
-        CA: { zh: "加拿大", en: "Canada", cities: ["温哥华", "多伦多"] }
-      }}
-    };
-    const cityEn = { 上海:"Shanghai", 北京:"Beijing", 成都:"Chengdu", 广州:"Guangzhou", 香港:"Hong Kong", 东京:"Tokyo", 京都:"Kyoto", 大阪:"Osaka", 新加坡:"Singapore", 巴黎:"Paris", 里昂:"Lyon", 伦敦:"London", 米兰:"Milan", 罗马:"Rome", 纽约:"New York", 旧金山:"San Francisco", 洛杉矶:"Los Angeles", 温哥华:"Vancouver", 多伦多:"Toronto" };
-    const restaurants = [
-      ["sh-01","上海","甬府","Yongfoo Elite","BLACK_DIAMOND","江浙菜","Jiangzhe",980],
-      ["sh-02","上海","福和慧","Fu He Hui","DIAMOND","素食精致料理","Vegetarian fine dining",1280],
-      ["sh-03","上海","菁禧荟","Jing Xi Hui","DIAMOND","粤菜","Cantonese",760],
-      ["sh-04","上海","遇外滩","Meet the Bund","PLATINUM","闽菜","Fujian",680],
-      ["sh-05","上海","雍颐庭","Yong Yi Ting","PLATINUM","淮扬菜","Huaiyang",720],
-      ["bj-01","北京","京兆尹","King's Joy","BLACK_DIAMOND","素食","Vegetarian",1200],
-      ["bj-02","北京","新荣记","Xin Rong Ji","DIAMOND","台州菜","Taizhou",900],
-      ["cd-01","成都","玉芝兰","Yu Zhi Lan","DIAMOND","川菜","Sichuan",880],
-      ["gz-01","广州","炳胜品味","Bingsheng Mansion","PLATINUM","粤菜","Cantonese",520],
-      ["hk-01","香港","唐阁","T'ang Court","BLACK_DIAMOND","粤菜","Cantonese",1500],
-      ["tk-01","东京","GINZA Kojyu","Ginza Kojyu","BLACK_DIAMOND","怀石料理","Kaiseki",2200],
-      ["pa-01","巴黎","Le Cinq","Le Cinq","BLACK_DIAMOND","法餐","French",2600],
-      ["ny-01","纽约","Atomix","Atomix","DIAMOND","韩式创意","Korean contemporary",1800]
-    ].map(([id, city, nameZh, nameEn, rating, cuisineZh, cuisineEn, price]) => ({id, city, nameZh, nameEn, rating, cuisineZh, cuisineEn, price}));
+  const restaurants = [
+    { id: "sh-001", nameZh: "醉月轩", nameEn: "Drunk Moon Pavilion", rating: "DIAMOND", cuisineZh: "本帮菜", cuisineEn: "Shanghainese", city: "Shanghai", country: "China", countryZh: "中国", cityZh: "上海", countryEn: "China", cityEn: "Shanghai", continent: "asia", price: 1200 },
+    { id: "sh-002", nameZh: "浦江二号", nameEn: "Pujiang No.2", rating: "PLATINUM", cuisineZh: "粤菜", cuisineEn: "Cantonese", city: "Shanghai", country: "China", countryZh: "中国", cityZh: "上海", countryEn: "China", cityEn: "Shanghai", continent: "asia", price: 1800 },
+    { id: "sh-003", nameZh: "外滩源·拾光", nameEn: "Bund Light", rating: "BLACK_DIAMOND", cuisineZh: "融合菜", cuisineEn: "Fusion", city: "Shanghai", country: "China", countryZh: "中国", cityZh: "上海", countryEn: "China", cityEn: "Shanghai", continent: "asia", price: 2600 },
+    { id: "bj-001", nameZh: "京兆尹", nameEn: "King's Joy", rating: "PLATINUM", cuisineZh: "素食", cuisineEn: "Vegetarian", city: "Beijing", country: "China", countryZh: "中国", cityZh: "北京", countryEn: "China", cityEn: "Beijing", continent: "asia", price: 1500 },
+    { id: "bj-002", nameZh: "拾久·胡同里", nameEn: "Shijiu Hutong", rating: "DIAMOND", cuisineZh: "京菜", cuisineEn: "Beijing Cuisine", city: "Beijing", country: "China", countryZh: "中国", cityZh: "北京", countryEn: "China", cityEn: "Beijing", continent: "asia", price: 900 },
+    { id: "cd-001", nameZh: "玉芝兰", nameEn: "Yu Zhi Lan", rating: "BLACK_DIAMOND", cuisineZh: "川菜", cuisineEn: "Sichuan", city: "Chengdu", country: "China", countryZh: "中国", cityZh: "成都", countryEn: "China", cityEn: "Chengdu", continent: "asia", price: 2000 },
+    { id: "cd-002", nameZh: "松云泽", nameEn: "Song Yun Ze", rating: "DIAMOND", cuisineZh: "川菜", cuisineEn: "Sichuan", city: "Chengdu", country: "China", countryZh: "中国", cityZh: "成都", countryEn: "China", cityEn: "Chengdu", continent: "asia", price: 1100 },
+    { id: "gz-001", nameZh: "白天鹅宾馆·玉堂春暖", nameEn: "White Swan Jade Hall", rating: "DIAMOND", cuisineZh: "粤菜", cuisineEn: "Cantonese", city: "Guangzhou", country: "China", countryZh: "中国", cityZh: "广州", countryEn: "China", cityEn: "Guangzhou", continent: "asia", price: 1300 },
+    { id: "hk-001", nameZh: "大班楼", nameEn: "The Chairman", rating: "BLACK_DIAMOND", cuisineZh: "粤菜", cuisineEn: "Cantonese", city: "Hong Kong", country: "Hong Kong", countryZh: "中国香港", cityZh: "香港", countryEn: "Hong Kong", cityEn: "Hong Kong", continent: "asia", price: 1600 },
+    { id: "tk-001", nameZh: "吉武", nameEn: "Yoshitake", rating: "BLACK_DIAMOND", cuisineZh: "日料·寿司", cuisineEn: "Sushi", city: "Tokyo", country: "Japan", countryZh: "日本", cityZh: "东京", countryEn: "Japan", cityEn: "Tokyo", continent: "asia", price: 2800 },
+    { id: "tk-002", nameZh: "Quintessence", nameEn: "Quintessence", rating: "PLATINUM", cuisineZh: "法餐", cuisineEn: "French", city: "Tokyo", country: "Japan", countryZh: "日本", cityZh: "东京", countryEn: "Japan", cityEn: "Tokyo", continent: "asia", price: 3200 },
+    { id: "pa-001", nameZh: "Le Cinq", nameEn: "Le Cinq", rating: "PLATINUM", cuisineZh: "法餐", cuisineEn: "French", city: "Paris", country: "France", countryZh: "法国", cityZh: "巴黎", countryEn: "France", cityEn: "Paris", continent: "europe", price: 3500 },
+    { id: "ny-001", nameZh: "Eleven Madison Park", nameEn: "Eleven Madison Park", rating: "DIAMOND", cuisineZh: "新美式", cuisineEn: "New American", city: "New York", country: "USA", countryZh: "美国", cityZh: "纽约", countryEn: "USA", cityEn: "New York", continent: "north_america", price: 3000 }
+  ];
 
-    const state = {
-      lang: "zh", role: "", expert: "", stage: "login",
-      city: "上海", continent: "ASIA", country: "CN",
-      search: "", rating: "ALL", status: "ALL",
-      reviews: {}, nominations: [], decision: null, receipt: null, confirmOpinion: ""
-    };
-
-    const $ = s => document.querySelector(s);
-    const $$ = s => Array.from(document.querySelectorAll(s));
-    const tr = k => dict[state.lang][k] || k;
-    const cityName = c => state.lang === "zh" ? c : (cityEn[c] || c);
-    const countryName = key => spatial[state.continent].countries[key][state.lang === "zh" ? "zh" : "en"];
-    const html = value => String(value).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-
-    function init() {
-      syncViewportHeight();
-      window.addEventListener("resize", syncViewportHeight);
-      window.addEventListener("orientationchange", () => setTimeout(syncViewportHeight, 120));
-      if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", syncViewportHeight);
-      }
-      $("#lang-login").onclick = $("#lang-board").onclick = toggleLang;
-      $("#expert-name").addEventListener("input", validateLogin);
-      $$(".choice[data-role]").forEach(btn => btn.onclick = () => { state.role = btn.dataset.role; validateLogin(); renderRoles(); });
-      $("#enter").onclick = enter;
-      $("#open-city").onclick = () => openSheet("city-sheet");
-      $("#open-add").onclick = () => { renderNominations(); validateNomination(); openSheet("add-sheet"); };
-      $("#submit-board").onclick = openConfirm;
-      $("#search").oninput = e => { state.search = e.target.value; renderBoard(); };
-      $("#rating-filter").onchange = e => { state.rating = e.target.value; renderBoard(); };
-      $("#city-search").oninput = renderCitySelector;
-      $("#back-board").onclick = () => { state.confirmOpinion = $("#final-opinion").value; showStage("board"); };
-      $("#final-sign").onclick = sign;
-      $("#copy-receipt").onclick = copyReceipt;
-      $("#reset").onclick = resetAll;
-      ["nom-name","nom-country","nom-city","nom-reason"].forEach(id => $("#" + id).addEventListener("input", validateNomination));
-      $("#save-nom").onclick = saveNomination;
-      $$("[data-close]").forEach(b => b.onclick = () => closeSheet(b.dataset.close));
-      render();
+  const i18n = {
+    zh: {
+      portal: "2027年美食林高端榜单评审", year: "年度终审通道",
+      loginHeadline: "理事投票与专家终审工作台", loginSub: "用于年度榜单最终审议、补充提名、电子签署与结果存根。",
+      nameLabel: "评审专家姓名", namePh: "请输入真实姓名 / 拼音", roleLabel: "选择评审席位",
+      roleBoard: "理事会成员", roleBoardSub: "理事席位", roleConsultant: "特邀顾问", roleConsultantSub: "顾问席位",
+      enter: "开始评审",
+      boardKicker: "2027年美食林高端榜单评审", boardTitle: "待评审餐厅",
+      currentCity: "当前评审城市", switchCity: "切换城市",
+      searchPh: "搜索商户、菜系、城市", allRatings: "全部评级",
+      pillAll: "全部", pillPending: "待审", pillAgreed: "已保持", pillAdjusted: "已调整",
+      addNomination: "增补", progress: "当前站点统计", submitBoard: "终审落库",
+      pending: "待评审", agreed: "已保持", adjusted: "已调整", startReview: "开始评审",
+      keep: "保持现有评级", adjust: "建议调整评级", reason: "评定依据", target: "选择目标评级",
+      saveDecision: "保存评审意见", decisionSaved: "评审意见已保存", decisionRevoked: "已撤销该餐厅评审",
+      cityKicker: "评审站点", cityTitle: "选择评审站点", citySearchPh: "输入北京 / Kyoto / China",
+      addKicker: "增补提名", addTitle: "提请增补商户", addName: "商户名称", addNamePh: "请输入商户全名",
+      addCountry: "国家", addCountryPh: "如 日本", addCity: "城市", addCityPh: "如 京都",
+      addReason: "评定依据（不少于15字）", addReasonPh: "请说明该商户的学术推荐理由。",
+      checklistName: "名称、国家、城市已填写", saveNom: "保存增补提名", savedNoms: "已保存增补名单",
+      nomSaved: "增补提名已保存", nomDeleted: "已撤回该增补提名", revoke: "撤回",
+      confirmKicker: "终审确认", confirmTitle: "提交前复核", confirmSub: "请核对本城市审议结果，可补充整体意见后提交。",
+      reviewedGroup: "已评审", keepCount: "保持", adjustCount: "调整",
+      reviewFormula: "已评审 = 保持现有评级 + 建议调整评级",
+      auditTitle: "调整与增补明细", noAudit: "本站点暂无调整或增补记录。", adjustDetail: "调整明细", nominationDetail: "增补明细",
+      opinionLabel: "总体评审意见与寄语（可选）", opinionPh: "可填写对本大区餐饮趋势、榜单结构或评审建议的总体意见。",
+      backEdit: "返回修改", finalSign: "确认签署",
+      certKicker: "提交完成", certTitle: "提交完成",
+      copyReceipt: "复制签署存根", reset: "模拟下一位评委",
+      submittedToast: "评审结果已落库，感谢您的审议。",
+      receiptExpert: "评审专家", receiptRole: "评审席位", receiptStation: "评审站点",
+      receiptReviewed: "已评审", receiptKeep: "保持", receiptAdjust: "调整", receiptNom: "增补",
+      receiptTime: "签署时间", receiptOpinion: "评审寄语", receiptCode: "存根编号",
+      roleZh: { BOARD_MEMBER: "理事会成员", CONSULTANT: "特邀顾问" },
+      thanksNote: "感谢您参与 2027 年美食林年度榜单评审。您的审议意见已正式落库，将于榜单定稿会议中作为重要参考依据。",
+      empty: "该筛选条件下暂无待评审餐厅。", nameShort: "姓名至少 2 个字符", roleRequired: "请选择评审席位",
+      langBtn: "英"
+    },
+    en: {
+      portal: "Ctrip Meishilin 2027 Premium List Review", year: "Annual Final Review",
+      loginHeadline: "Council Voting & Expert Final Review Workbench", loginSub: "For final deliberation, supplementary nominations, e-signing and result receipts.",
+      nameLabel: "Reviewer Name", namePh: "Enter real name / pinyin", roleLabel: "Select Review Seat",
+      roleBoard: "Council Member", roleBoardSub: "Council seat", roleConsultant: "Invited Consultant", roleConsultantSub: "Consultant seat",
+      enter: "Start Review",
+      boardKicker: "Ctrip Meishilin 2027 Premium List Review", boardTitle: "Pending Restaurants",
+      currentCity: "Current station", switchCity: "Switch City",
+      searchPh: "Search by name, cuisine, city", allRatings: "All ratings",
+      pillAll: "All", pillPending: "Pending", pillAgreed: "Kept", pillAdjusted: "Adjusted",
+      addNomination: "Nominate", progress: "Station stats", submitBoard: "Submit",
+      pending: "Pending", agreed: "Kept", adjusted: "Adjusted", startReview: "Start Review",
+      keep: "Keep current rating", adjust: "Suggest adjustment", reason: "Review basis", target: "Target rating",
+      saveDecision: "Save Review", decisionSaved: "Review saved", decisionRevoked: "Review revoked",
+      cityKicker: "Review station", cityTitle: "Select a station", citySearchPh: "Beijing / Kyoto / China",
+      addKicker: "Supplementary Nomination", addTitle: "Nominate a Restaurant", addName: "Restaurant name", addNamePh: "Full name",
+      addCountry: "Country", addCountryPh: "e.g. Japan", addCity: "City", addCityPh: "e.g. Kyoto",
+      addReason: "Review basis (min 15 chars)", addReasonPh: "Explain the academic reason for this nomination.",
+      checklistName: "Name, country and city filled", saveNom: "Save Nomination", savedNoms: "Saved nominations",
+      nomSaved: "Nomination saved", nomDeleted: "Nomination revoked", revoke: "Revoke",
+      confirmKicker: "Final Confirmation", confirmTitle: "Pre-submission Review", confirmSub: "Review the station results. You may add overall comments before submitting.",
+      reviewedGroup: "Reviewed", keepCount: "Kept", adjustCount: "Adjusted",
+      reviewFormula: "Reviewed = Kept current rating + Suggested adjustment",
+      auditTitle: "Adjustments & Nominations", noAudit: "No adjustments or nominations at this station.", adjustDetail: "Adjustments", nominationDetail: "Nominations",
+      opinionLabel: "Overall review comments (optional)", opinionPh: "Overall comments on dining trends, list structure or review suggestions.",
+      backEdit: "Edit", finalSign: "Confirm & Sign",
+      certKicker: "Submission Complete", certTitle: "Submission Complete",
+      copyReceipt: "Copy Receipt", reset: "Simulate Next Reviewer",
+      submittedToast: "Review submitted. Thank you for your deliberation.",
+      receiptExpert: "Reviewer", receiptRole: "Seat", receiptStation: "Station",
+      receiptReviewed: "Reviewed", receiptKeep: "Kept", receiptAdjust: "Adjusted", receiptNom: "Nominations",
+      receiptTime: "Signed at", receiptOpinion: "Comments", receiptCode: "Receipt No.",
+      roleZh: { BOARD_MEMBER: "Council Member", CONSULTANT: "Invited Consultant" },
+      thanksNote: "Thank you for participating in the 2027 Meishilin annual list review. Your deliberation has been recorded and will serve as a key reference at the finalization meeting.",
+      empty: "No pending restaurants under current filters.", nameShort: "Name must be at least 2 characters", roleRequired: "Please select a review seat",
+      langBtn: "中"
     }
+  };
 
-    function syncViewportHeight() {
-      const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-      document.documentElement.style.setProperty("--app-height", `${Math.round(viewportHeight)}px`);
-    }
+  const state = {
+    lang: "zh", role: null, expert: "", stage: "login",
+    city: "Shanghai", continent: "asia", country: "China",
+    search: "", rating: "", status: "all",
+    reviews: {}, nominations: {}, decision: { restaurantId: null, status: "AGREED", target: "", reason: "" },
+    receipt: null, confirmOpinion: ""
+  };
 
-    function toggleLang() {
-      state.lang = state.lang === "zh" ? "en" : "zh";
-      render();
-      if ($("#decision-sheet").classList.contains("open")) renderDecision();
-      if ($("#add-sheet").classList.contains("open")) renderNominations();
-      if ($("#city-sheet").classList.contains("open")) renderCitySelector();
-    }
+  const tr = key => i18n[state.lang][key] || key;
 
-    function translateStatic() {
-      $$("[data-i18n]").forEach(el => el.textContent = tr(el.dataset.i18n));
-      $("#lang-login").textContent = state.lang === "zh" ? "EN" : "中";
-      $("#lang-board").textContent = state.lang === "zh" ? "EN" : "中";
-      $("#expert-name").placeholder = state.lang === "zh" ? "请输入真实姓名 / 拼音" : "Enter real name / pinyin";
-      $("#search").placeholder = state.lang === "zh" ? "搜索商户、菜系、城市" : "Search merchant, cuisine or city";
-      $("#city-search").placeholder = state.lang === "zh" ? "输入城市或国家名称" : "Type a city or country";
-      $("#final-opinion").placeholder = state.lang === "zh" ? "可填写对本大区餐饮趋势、榜单结构或评审建议的总体意见。" : "Add regional trend, list structure or review recommendations.";
-      $("#nom-reason").placeholder = state.lang === "zh" ? "说明为什么该商户不应被遗漏。" : "Explain why this merchant should not be missed.";
-    }
+  function toggleLang() {
+    state.lang = state.lang === "zh" ? "en" : "zh";
+    translateStatic();
+    render();
+  }
 
-    function validateLogin() {
-      state.expert = $("#expert-name").value.trim();
-      $("#enter").disabled = !(state.expert.length >= 2 && state.role);
-    }
+  function translateStatic() {
+    $$("[data-i18n]").forEach(el => { const k = el.getAttribute("data-i18n"); if (i18n[state.lang][k] != null) el.textContent = i18n[state.lang][k]; });
+    $$("[data-i18n-ph]").forEach(el => { const k = el.getAttribute("data-i18n-ph"); if (i18n[state.lang][k] != null) el.placeholder = i18n[state.lang][k]; });
+    $$(".lang").forEach(b => b.textContent = i18n[state.lang].langBtn);
+    renderCityLabel();
+    renderRatingFilter();
+  }
 
-    function renderRoles() {
-      $$(".choice[data-role]").forEach(btn => btn.classList.toggle("active", btn.dataset.role === state.role));
-    }
+  function validateLogin() {
+    const name = $("#expert-name").value.trim();
+    $("#enter").disabled = !(state.role && name.length >= 2);
+  }
 
-    function enter() {
-      validateLogin();
-      if ($("#enter").disabled) return;
-      showStage("board");
-      toast(tr("loginReady"));
-    }
+  function renderRoles() {
+    $$(".choice[data-role]").forEach(b => b.classList.toggle("active", b.dataset.role === state.role));
+  }
 
-    function showStage(name) {
-      state.stage = name;
-      $$(".stage").forEach(s => s.classList.remove("active"));
-      $("#stage-" + name).classList.add("active");
-      if (name === "board") renderBoard();
-      if (name === "confirm") renderConfirm();
-      if (name === "cert") renderReceipt();
-    }
+  function enter() {
+    const name = $("#expert-name").value.trim();
+    if (name.length < 2) { toast(tr("nameShort")); return; }
+    if (!state.role) { toast(tr("roleRequired")); return; }
+    state.expert = name;
+    state.stage = "board";
+    showStage("board");
+    render();
+  }
 
-    function render() {
-      translateStatic();
-      renderRoles();
-      validateLogin();
-      renderBoard();
-      renderCitySelector();
-      if (state.stage === "confirm") renderConfirm();
-      if (state.stage === "cert") renderReceipt();
-    }
+  function showStage(name) {
+    $$(".stage").forEach(s => s.classList.toggle("active", s.id === "stage-" + name));
+  }
 
-    function renderBoard() {
-      $("#city-label").textContent = `${countryName(state.country)} · ${cityName(state.city)}`;
-      const sel = $("#rating-filter");
-      sel.innerHTML = `<option value="ALL">${tr("allRatings")}</option>` + ratings.map(r => `<option value="${r}">${ratingText[state.lang][r]}</option>`).join("");
-      sel.value = state.rating;
-      renderPills();
-      const list = filteredRestaurants();
-      $("#restaurant-list").innerHTML = list.length ? list.map(restaurantCard).join("") : `<div class="empty">${tr("empty")}</div>`;
-      $$("#restaurant-list [data-start-review]").forEach(button => {
-        button.onclick = () => openDecision(button.dataset.startReview);
-      });
-      const s = stats();
-      $("#progress-label").textContent = `${tr("nominations")} ${s.nominations} | ${tr("reviewed")} ${s.reviewed}`;
-      $("#submit-board").disabled = s.reviewed + s.nominations < 1;
-    }
+  function render() {
+    renderCityLabel();
+    renderPills();
+    renderRatingFilter();
+    renderBoard();
+    updateSubmit();
+  }
 
-    function renderPills() {
-      const scoped = restaurants.filter(r => r.city === state.city);
-      const counts = {
-        ALL: scoped.length,
-        PENDING: scoped.filter(r => !state.reviews[r.id]).length,
-        AGREED: scoped.filter(r => state.reviews[r.id]?.status === "AGREED").length,
-        ADJUSTED: scoped.filter(r => state.reviews[r.id]?.status === "ADJUSTED").length
-      };
-      const labels = { ALL: tr("all"), PENDING: tr("pending"), AGREED: tr("agreed"), ADJUSTED: tr("adjusted") };
-      $("#state-pills").innerHTML = Object.keys(labels).map(key => `<button class="pill ${state.status === key ? "active" : ""}" data-status="${key}">${labels[key]} (${counts[key]})</button>`).join("");
-      $$("#state-pills button").forEach(b => b.onclick = () => { state.status = b.dataset.status; renderBoard(); });
-    }
+  function renderCityLabel() {
+    const c = restaurants.find(r => r.city === state.city) || {};
+    const country = state.lang === "zh" ? (c.countryZh || c.country) : (c.countryEn || c.country);
+    const city = state.lang === "zh" ? (c.cityZh || c.city) : (c.cityEn || c.city);
+    $("#city-label").textContent = `${country} · ${city}`;
+  }
 
-    function filteredRestaurants() {
-      const q = state.search.trim().toLowerCase();
-      return restaurants.filter(r => {
-        if (r.city !== state.city) return false;
-        if (state.rating !== "ALL" && r.rating !== state.rating) return false;
-        const review = state.reviews[r.id];
-        if (state.status === "PENDING" && review) return false;
-        if (state.status === "AGREED" && review?.status !== "AGREED") return false;
-        if (state.status === "ADJUSTED" && review?.status !== "ADJUSTED") return false;
-        if (!q) return true;
-        return [r.nameZh, r.nameEn, r.cuisineZh, r.cuisineEn, cityName(r.city)].join(" ").toLowerCase().includes(q);
-      });
-    }
+  function renderRatingFilter() {
+    const sel = $("#rating-filter");
+    const cur = sel.value;
+    sel.innerHTML = `<option value="">${tr("allRatings")}</option>` +
+      ratings.map(r => `<option value="${r}">${ratingText[state.lang][r]}</option>`).join("");
+    if (cur) sel.value = cur;
+  }
 
-    function restaurantCard(r) {
+  function renderPills() {
+    const pills = [["all", "pillAll"], ["pending", "pillPending"], ["agreed", "pillAgreed"], ["adjusted", "pillAdjusted"]];
+    $("#state-pills").innerHTML = pills.map(([v, k]) =>
+      `<button type="button" class="pill ${state.status === v ? "active" : ""}" data-status="${v}">${tr(k)}</button>`).join("");
+    $$("#state-pills .pill").forEach(p => p.onclick = () => { state.status = p.dataset.status; render(); });
+  }
+
+  function filteredRestaurants() {
+    return restaurants.filter(r => {
+      if (r.city !== state.city) return false;
+      if (state.rating && r.rating !== state.rating) return false;
       const review = state.reviews[r.id];
-      const status = !review ? `<span class="tag">${tr("pending")}</span>` :
-        review.status === "AGREED" ? `<span class="tag teal">${tr("agreed")}</span>` :
-        `<span class="tag blue">${tr("adjusted")} → ${ratingText[state.lang][review.target]}</span>`;
-      const action = `<button type="button" class="secondary rest-action" data-start-review="${r.id}">${tr("startReview")}</button>`;
-      return `<article class="restaurant" data-id="${r.id}">
-        <div class="thumb">${r.nameZh.slice(0,1)}</div>
-        <div class="rest-body">
-          <div class="rest-title"><strong>${html(state.lang === "zh" ? r.nameZh : r.nameEn)}</strong></div>
-          <p class="meta">${html(state.lang === "zh" ? r.cuisineZh : r.cuisineEn)} · ${state.lang === "zh" ? "人均" : "Average"} ¥${r.price}</p>
-          <div class="tag-row"><span class="tag gold">${ratingText[state.lang][r.rating]}</span>${status}</div>
-        </div>
-        ${action}
-      </article>`;
-    }
-
-    function openDecision(id) {
-      const r = restaurants.find(item => item.id === id);
-      const existing = state.reviews[id];
-      state.decision = existing ? { restaurantId: id, status: existing.status, target: existing.target || "", reason: existing.reason || "" } : { restaurantId: id, status: "", target: "", reason: "" };
-      $("#desk-name").textContent = state.lang === "zh" ? r.nameZh : r.nameEn;
-      $("#desk-rating").textContent = ratingText[state.lang][r.rating];
-      $("#desk-meta").textContent = `${state.lang === "zh" ? r.cuisineZh : r.cuisineEn} · ${state.lang === "zh" ? "人均" : "Average"} ¥${r.price}`;
-      renderDecision();
-      openSheet("decision-sheet");
-    }
-
-    function renderDecision() {
-      const r = restaurants.find(item => item.id === state.decision.restaurantId);
-      const d = state.decision;
-      const targets = ratings.filter(x => x !== r.rating).concat("REMOVED");
-      $("#decision-body").innerHTML = `
-        <div class="seg">
-          <button type="button" class="choice ${d.status === "AGREED" ? "active" : ""}" data-decision="AGREED"><strong>${tr("keep")}</strong><span>${ratingText[state.lang][r.rating]}</span></button>
-          <button type="button" class="choice ${d.status === "ADJUSTED" ? "active" : ""}" data-decision="ADJUSTED"><strong>${tr("adjust")}</strong><span>${tr("reason")}</span></button>
-        </div>
-        <div id="adjust-area" style="${d.status === "ADJUSTED" ? "" : "display:none"};display:${d.status === "ADJUSTED" ? "grid" : "none"};gap:14px;">
-          <div class="field"><label>${tr("target")}</label><select id="decision-target"><option value="">--</option>${targets.map(x => `<option value="${x}">${ratingText[state.lang][x]}</option>`).join("")}</select></div>
-          <div class="field"><label>${tr("reason")}</label><textarea id="decision-reason" rows="4">${html(d.reason)}</textarea></div>
-          <div class="checklist" id="decision-check"></div>
-        </div>
-        <button type="button" class="primary" id="save-decision" disabled>${tr("saveDecision")}</button>`;
-      $$("#decision-body [data-decision]").forEach(b => b.onclick = () => { state.decision.status = b.dataset.decision; renderDecision(); });
-      const target = $("#decision-target");
-      const reason = $("#decision-reason");
-      if (target) { target.value = d.target; target.onchange = e => { state.decision.target = e.target.value; validateDecision(); }; }
-      if (reason) { reason.oninput = e => { state.decision.reason = e.target.value; validateDecision(); }; }
-      $("#save-decision").onclick = saveDecision;
-      validateDecision();
-    }
-
-    function validateDecision() {
-      const d = state.decision;
-      let ok = d.status === "AGREED";
-      if (d.status === "ADJUSTED") {
-        const hasTarget = !!d.target;
-        const hasReason = d.reason.trim().length >= 15;
-        ok = hasTarget && hasReason;
-        $("#decision-check").innerHTML = `<span class="${hasTarget ? "ok" : "bad"}">${hasTarget ? "✓" : "□"} ${tr("target")}</span><span class="${hasReason ? "ok" : "bad"}">${hasReason ? "✓" : "□"} ${tr("reason")} (${d.reason.trim().length}/15)</span>`;
+      if (state.status === "pending" && review) return false;
+      if (state.status === "agreed" && !(review && review.status === "AGREED")) return false;
+      if (state.status === "adjusted" && !(review && review.status === "ADJUSTED")) return false;
+      if (state.search) {
+        const q = state.search.toLowerCase();
+        const hay = [r.nameZh, r.nameEn, r.cuisineZh, r.cuisineEn, r.city, r.cityZh, r.country, r.countryZh].join(" ").toLowerCase();
+        if (!hay.includes(q)) return false;
       }
-      $("#save-decision").disabled = !ok;
-    }
+      return true;
+    });
+  }
 
-    function saveDecision() {
-      const d = state.decision;
-      if ($("#save-decision").disabled) return;
-      state.reviews[d.restaurantId] = d.status === "AGREED"
-        ? { status: "AGREED" }
-        : { status: "ADJUSTED", target: d.target, reason: d.reason.trim() };
-      closeSheet("decision-sheet");
-      renderBoard();
-      toast(tr("savedDecision"));
-    }
+  function restaurantCard(r) {
+    const review = state.reviews[r.id];
+    const status = !review ? `<span class="tag">${tr("pending")}</span>`
+      : review.status === "AGREED" ? `<span class="tag-active">${tr("agreed")}</span>`
+      : `<span class="tag-outline">${tr("adjusted")} → ${ratingText[state.lang][review.target]}</span>`;
+    const cuisine = state.lang === "zh" ? r.cuisineZh : r.cuisineEn;
+    const avg = state.lang === "zh" ? "人均" : "Avg";
+    return `<article class="restaurant" data-id="${r.id}">
+      <div class="thumb"><i data-lucide="utensils" class="w-6 h-6" aria-hidden="true"></i></div>
+      <div class="rest-body">
+        <div class="rest-title"><strong>${html(state.lang === "zh" ? r.nameZh : r.nameEn)}</strong></div>
+        <p class="meta">${html(cuisine)} · ${avg} ¥${r.price}</p>
+        <div class="tag-row"><span class="tag-rating">${ratingText[state.lang][r.rating]}</span>${status}</div>
+      </div>
+      <button type="button" class="rest-action" data-start-review="${r.id}">${tr("startReview")}</button>
+    </article>`;
+  }
 
-    function renderCitySelector() {
-      const q = $("#city-search")?.value.trim().toLowerCase() || "";
-      const tiers = $("#city-tiers");
-      const results = $("#city-results");
-      if (q) {
-        tiers.hidden = true; results.hidden = false;
-        const matches = flatCities().filter(item => [item.city, cityEn[item.city], item.country.zh, item.country.en, item.continent.zh, item.continent.en].join(" ").toLowerCase().includes(q));
-        results.innerHTML = matches.length ? matches.map(item => `<button data-city="${item.city}" data-cont="${item.contKey}" data-country="${item.countryKey}"><strong>${cityName(item.city)}</strong><span class="sub">${item.country[state.lang === "zh" ? "zh" : "en"]} · ${item.continent[state.lang === "zh" ? "zh" : "en"]}</span></button>`).join("") : `<div class="empty">${tr("citySearchEmpty")}</div>`;
-        $$("#city-results button").forEach(b => b.onclick = () => selectCity(b.dataset.city, b.dataset.cont, b.dataset.country));
-        return;
-      }
-      tiers.hidden = false; results.hidden = true;
-      const continents = Object.keys(spatial).map(k => `<button class="${k === state.continent ? "active" : ""}" data-cont="${k}">${spatial[k][state.lang === "zh" ? "zh" : "en"]}</button>`).join("");
-      const countries = Object.keys(spatial[state.continent].countries).map(k => `<button class="${k === state.country ? "active" : ""}" data-country="${k}">${spatial[state.continent].countries[k][state.lang === "zh" ? "zh" : "en"]}</button>`).join("");
-      const cities = spatial[state.continent].countries[state.country].cities.map(c => `<button class="${c === state.city ? "active" : ""}" data-city="${c}">${cityName(c)}</button>`).join("");
-      tiers.innerHTML = `<div class="tier">${continents}</div><div class="tier">${countries}</div><div class="tier">${cities}</div>`;
-      $$("#city-tiers [data-cont]").forEach(b => b.onclick = () => { state.continent = b.dataset.cont; state.country = Object.keys(spatial[state.continent].countries)[0]; renderCitySelector(); });
-      $$("#city-tiers [data-country]").forEach(b => b.onclick = () => { state.country = b.dataset.country; renderCitySelector(); });
-      $$("#city-tiers [data-city]").forEach(b => b.onclick = () => selectCity(b.dataset.city, state.continent, state.country));
-    }
+  function renderBoard() {
+    const list = filteredRestaurants();
+    const wrap = $("#restaurant-list");
+    wrap.innerHTML = list.length ? list.map(restaurantCard).join("")
+      : `<div class="empty"><i data-lucide="search-x" class="w-6 h-6" aria-hidden="true"></i><span>${tr("empty")}</span></div>`;
+    $$("#restaurant-list [data-start-review]").forEach(b => b.onclick = () => openDecision(b.dataset.startReview));
+    const reviewed = Object.values(state.reviews).filter(v => true).length;
+    const noms = currentNominations().length;
+    $("#progress-label").textContent = `${tr("receiptNom")} ${noms} · ${tr("receiptReviewed")} ${reviewed}`;
+    if (window.lucide) lucide.createIcons();
+  }
 
-    function flatCities() {
-      const out = [];
-      Object.entries(spatial).forEach(([contKey, continent]) => Object.entries(continent.countries).forEach(([countryKey, country]) => country.cities.forEach(city => out.push({ contKey, countryKey, continent, country, city }))));
-      return out;
-    }
+  function updateSubmit() {
+    const hasReview = Object.keys(state.reviews).length > 0;
+    const hasNom = Object.keys(state.nominations).length > 0;
+    $("#submit-board").disabled = !(hasReview || hasNom);
+  }
 
-    function selectCity(city, cont, country) {
-      state.city = city; state.continent = cont; state.country = country;
-      state.search = ""; state.rating = "ALL"; state.status = "ALL";
-      $("#search").value = ""; $("#city-search").value = "";
-      closeSheet("city-sheet");
-      renderBoard();
-      toast(`${cityName(city)} · ${countryName(country)}`);
-    }
+  function openDecision(id) {
+    state.decision = { restaurantId: id, status: "AGREED", target: "", reason: "" };
+    const r = restaurants.find(item => item.id === id);
+    $("#desk-rating").textContent = ratingText[state.lang][r.rating];
+    $("#desk-name").textContent = state.lang === "zh" ? r.nameZh : r.nameEn;
+    $("#desk-meta").textContent = `${state.lang === "zh" ? r.cuisineZh : r.cuisineEn} · ${tr("currentCity")} ${state.lang === "zh" ? r.cityZh : r.cityEn}`;
+    renderDecision();
+    openSheet("decision-sheet");
+  }
 
-    function validateNomination() {
-      const name = $("#nom-name").value.trim(), country = $("#nom-country").value.trim(), city = $("#nom-city").value.trim(), reason = $("#nom-reason").value.trim();
-      const filled = !!(name && country && city);
-      const reasonOk = reason.length >= 15;
-      $("#nom-check").innerHTML = `<span class="${filled ? "ok" : "bad"}">${filled ? "✓" : "□"} ${state.lang === "zh" ? "名称、国家、城市已填写" : "Name, country and city filled"}</span><span class="${reasonOk ? "ok" : "bad"}">${reasonOk ? "✓" : "□"} ${tr("addReason")} (${reason.length}/15)</span>`;
-      $("#save-nom").disabled = !(filled && reasonOk);
-    }
+  function renderDecision() {
+    const r = restaurants.find(item => item.id === state.decision.restaurantId);
+    const d = state.decision;
+    const targets = ratings.filter(x => x !== r.rating).concat("REMOVED");
+    $("#decision-body").innerHTML = `
+      <div class="seg">
+        <button type="button" class="choice ${d.status === "AGREED" ? "active" : ""}" data-decision="AGREED"><strong>${tr("keep")}</strong><span>${ratingText[state.lang][r.rating]}</span></button>
+        <button type="button" class="choice ${d.status === "ADJUSTED" ? "active" : ""}" data-decision="ADJUSTED"><strong>${tr("adjust")}</strong><span>${tr("reason")}</span></button>
+      </div>
+      <div id="adjust-area" style="display:${d.status === "ADJUSTED" ? "grid" : "none"};gap:14px;">
+        <div class="field">
+          <label>${tr("target")}</label>
+          <select id="decision-target"><option value="">--</option>${targets.map(x => `<option value="${x}">${ratingText[state.lang][x]}</option>`).join("")}</select>
+        </div>
+        <div class="field"><label>${tr("reason")}</label><textarea id="decision-reason" rows="4" placeholder="${html(tr("addReasonPh"))}">${html(d.reason)}</textarea></div>
+        <div class="checklist" id="decision-check"></div>
+      </div>
+      <button type="button" class="primary" id="save-decision" disabled>${tr("saveDecision")}</button>`;
+    $$("#decision-body [data-decision]").forEach(b => b.onclick = () => { state.decision.status = b.dataset.decision; renderDecision(); });
+    const target = $("#decision-target");
+    const reason = $("#decision-reason");
+    if (target) { target.value = d.target; target.onchange = e => { state.decision.target = e.target.value; validateDecision(); }; }
+    if (reason) { reason.oninput = e => { state.decision.reason = e.target.value; validateDecision(); }; }
+    $("#save-decision").onclick = saveDecision;
+    validateDecision();
+    if (window.lucide) lucide.createIcons();
+  }
 
-    function saveNomination() {
-      if ($("#save-nom").disabled) return;
-      state.nominations.push({
-        id: Date.now(),
-        reviewCity: state.city,
-        reviewCountry: state.country,
-        name: $("#nom-name").value.trim(),
-        country: $("#nom-country").value.trim(),
-        city: $("#nom-city").value.trim(),
-        reason: $("#nom-reason").value.trim()
+  function validateDecision() {
+    const d = state.decision;
+    let ok = d.status === "AGREED";
+    if (d.status === "ADJUSTED") {
+      const hasTarget = !!d.target;
+      const hasReason = d.reason.trim().length >= 15;
+      ok = hasTarget && hasReason;
+      const check = $("#decision-check");
+      if (check) check.innerHTML = `
+        <div class="item ${hasTarget ? "ok" : "bad"}"><i data-lucide="${hasTarget ? "check" : "square"}" class="w-3.5 h-3.5"></i><span>${tr("target")}</span></div>
+        <div class="item ${hasReason ? "ok" : "bad"}"><i data-lucide="${hasReason ? "check" : "square"}" class="w-3.5 h-3.5"></i><span>${tr("reason")} (${d.reason.trim().length}/15)</span></div>`;
+    }
+    $("#save-decision").disabled = !ok;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function saveDecision() {
+    const d = state.decision;
+    if (d.status === "ADJUSTED" && (!d.target || d.reason.trim().length < 15)) return;
+    state.reviews[d.restaurantId] = {
+      id: d.restaurantId, status: d.status,
+      target: d.status === "AGREED" ? restaurants.find(r => r.id === d.restaurantId).rating : d.target,
+      reason: d.status === "AGREED" ? "" : d.reason.trim()
+    };
+    closeSheet("decision-sheet");
+    toast(tr("decisionSaved"));
+    render();
+  }
+
+  // —— 城市选择 ——
+  function renderCitySelector() {
+    const conts = {
+      asia: state.lang === "zh" ? "亚洲" : "Asia",
+      europe: state.lang === "zh" ? "欧洲" : "Europe",
+      north_america: state.lang === "zh" ? "北美" : "North America"
+    };
+    const contKey = Object.keys(conts);
+    const countries = flatCities().reduce((acc, c) => { (acc[c.continent] = acc[c.continent] || {})[c.country] = true; return acc; }, {});
+    const col1 = contKey.map(k => `<button type="button" class="${state.continent === k ? "active" : ""}" data-continent="${k}">${conts[k]}</button>`).join("");
+    const countryList = Object.keys(countries[state.continent] || {});
+    const countryNames = {};
+    flatCities().forEach(c => { countryNames[c.country] = state.lang === "zh" ? c.countryZh : c.countryEn; });
+    const col2 = countryList.map(c => `<button type="button" class="${state.country === c ? "active" : ""}" data-country="${c}">${html(countryNames[c] || c)}</button>`).join("");
+    const cityList = flatCities().filter(c => c.continent === state.continent && c.country === state.country);
+    const cityNames = {};
+    flatCities().forEach(c => { cityNames[c.city] = state.lang === "zh" ? c.cityZh : c.cityEn; });
+    const col3 = cityList.map(c => `<button type="button" class="${state.city === c.city ? "active" : ""}" data-city="${c.city}">${html(cityNames[c.city] || c.city)}</button>`).join("");
+    $("#city-tiers").innerHTML = `<div class="tier" data-col="continent">${col1}</div><div class="tier" data-col="country">${col2}</div><div class="tier" data-col="city">${col3}</div>`;
+    $$('#city-tiers [data-continent]').forEach(b => b.onclick = () => {
+      state.continent = b.dataset.continent;
+      const firstCountry = Object.keys(countries[state.continent] || {})[0];
+      state.country = firstCountry || "";
+      const firstCity = flatCities().find(c => c.continent === state.continent && c.country === state.country);
+      state.city = firstCity ? firstCity.city : "";
+      renderCitySelector();
+    });
+    $$('#city-tiers [data-country]').forEach(b => b.onclick = () => {
+      state.country = b.dataset.country;
+      const firstCity = flatCities().find(c => c.continent === state.continent && c.country === state.country);
+      state.city = firstCity ? firstCity.city : "";
+      renderCitySelector();
+    });
+    $$('#city-tiers [data-city]').forEach(b => b.onclick = () => { state.city = b.dataset.city; selectCity(); });
+  }
+
+  function flatCities() {
+    const seen = {};
+    return restaurants.map(r => ({ continent: r.continent, country: r.country, countryZh: r.countryZh, countryEn: r.countryEn, city: r.city, cityZh: r.cityZh, cityEn: r.cityEn }))
+      .filter(c => { if (seen[c.city]) return false; seen[c.city] = true; return true; });
+  }
+
+  function searchCities(q) {
+    const ql = q.toLowerCase().trim();
+    const res = $("#city-results");
+    if (!ql) { res.hidden = true; $("#city-tiers").hidden = false; return; }
+    const matches = flatCities().filter(c => {
+      const hay = [c.city, c.cityZh, c.cityEn, c.country, c.countryZh, c.countryEn].join(" ").toLowerCase();
+      return hay.includes(ql);
+    });
+    res.hidden = matches.length === 0;
+    $("#city-tiers").hidden = matches.length > 0;
+    const cityNames = {}; flatCities().forEach(c => { cityNames[c.city] = state.lang === "zh" ? c.cityZh : c.cityEn; });
+    const countryNames = {}; flatCities().forEach(c => { countryNames[c.country] = state.lang === "zh" ? c.countryZh : c.countryEn; });
+    res.innerHTML = matches.map(c => `<button type="button" data-city="${c.city}"><strong>${html(cityNames[c.city] || c.city)}</strong><span class="sub">${html(countryNames[c.country] || c.country)}</span></button>`).join("");
+    $$('#city-results [data-city]').forEach(b => b.onclick = () => {
+      state.city = b.dataset.city;
+      const full = flatCities().find(c => c.city === state.city);
+      if (full) { state.continent = full.continent; state.country = full.country; }
+      selectCity();
+    });
+  }
+
+  function selectCity() {
+    closeSheet("city-sheet");
+    $("#city-search").value = "";
+    renderCitySelector();
+    render();
+  }
+
+  function validateNomination() {
+    const name = $("#nom-name").value.trim(), country = $("#nom-country").value.trim(), city = $("#nom-city").value.trim(), reason = $("#nom-reason").value.trim();
+    const filled = !!(name && country && city);
+    const reasonOk = reason.length >= 15;
+    const check = $("#nom-check");
+    if (check) check.innerHTML = `
+      <div class="item ${filled ? "ok" : "bad"}"><i data-lucide="${filled ? "check" : "square"}" class="w-3.5 h-3.5"></i><span>${tr("checklistName")}</span></div>
+      <div class="item ${reasonOk ? "ok" : "bad"}"><i data-lucide="${reasonOk ? "check" : "square"}" class="w-3.5 h-3.5"></i><span>${tr("addReason")} (${reason.length}/15)</span></div>`;
+    $("#save-nom").disabled = !(filled && reasonOk);
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function saveNomination() {
+    const name = $("#nom-name").value.trim(), country = $("#nom-country").value.trim(), city = $("#nom-city").value.trim(), reason = $("#nom-reason").value.trim();
+    if (!(name && country && city && reason.length >= 15)) return;
+    const id = "nom-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    state.nominations[id] = { id, name, country, city, reason };
+    ["#nom-name", "#nom-country", "#nom-city", "#nom-reason"].forEach(s => $(s).value = "");
+    toast(tr("nomSaved"));
+    renderNominations();
+    validateNomination();
+    render();
+  }
+
+  function renderNominations() {
+    const list = $("#nom-list");
+    const current = currentNominations();
+    list.innerHTML = current.length ? current.map(n => `<div class="nomination">
+      <div class="nomination-head"><strong>${html(n.name)}</strong><button type="button" class="danger" data-del="${n.id}"><i data-lucide="undo-2" class="w-3.5 h-3.5" aria-hidden="true"></i>${tr("revoke")}</button></div>
+      <p class="meta">${html(n.country)} · ${html(n.city)}</p>
+      <p class="sub">${html(n.reason)}</p></div>`).join("")
+      : `<p class="sub">${state.lang === "zh" ? "暂无增补提名。" : "No saved nominations."}</p>`;
+    $$("#nom-list [data-del]").forEach(b => b.onclick = () => { delete state.nominations[b.dataset.del]; toast(tr("nomDeleted")); renderNominations(); render(); });
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function currentNominations() {
+    return Object.values(state.nominations);
+  }
+
+  function openConfirm() {
+    renderConfirm();
+    state.stage = "confirm";
+    showStage("confirm");
+  }
+
+  function stats() {
+    const reviewed = Object.keys(state.reviews).length;
+    const agreed = Object.values(state.reviews).filter(v => v.status === "AGREED").length;
+    const adjusted = Object.values(state.reviews).filter(v => v.status === "ADJUSTED").length;
+    return { reviewed, agreed, adjusted };
+  }
+
+  function renderConfirm() {
+    const s = stats();
+    $("#confirm-metrics").innerHTML = `
+      <div class="confirm-review-card">
+        <div class="review-total"><b>${s.reviewed}</b><span>${tr("reviewedGroup")}</span></div>
+        <div class="review-breakdown">
+          <div class="review-side"><b>${s.agreed}</b><span>${tr("keepCount")}</span></div>
+          <div class="review-side"><b>${s.adjusted}</b><span>${tr("adjustCount")}</span></div>
+        </div>
+      </div>
+      <p class="formula">${tr("reviewFormula")}</p>`;
+    $("#audit-title").textContent = tr("auditTitle");
+    renderAuditDetails();
+    $("#final-opinion").value = state.confirmOpinion;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function renderAuditDetails() {
+    const adjusted = Object.values(state.reviews).filter(v => v.status === "ADJUSTED");
+    const noms = currentNominations();
+    const wrap = $("#confirm-audit");
+    if (!adjusted.length && !noms.length) {
+      wrap.innerHTML = `<div class="audit-row"><span class="sub">${tr("noAudit")}</span></div>`;
+      return;
+    }
+    const rows = [];
+    if (adjusted.length) {
+      rows.push(`<div class="audit-row"><strong>${tr("adjustDetail")}（${adjusted.length}）</strong></div>`);
+      adjusted.forEach(v => {
+        const r = restaurants.find(item => item.id === v.id);
+        const name = r ? (state.lang === "zh" ? r.nameZh : r.nameEn) : v.id;
+        const from = r ? ratingText[state.lang][r.rating] : "—";
+        rows.push(`<div class="audit-row">
+          <strong>${html(name)}</strong>
+          <span class="delta">${from} → ${ratingText[state.lang][v.target]}</span>
+          <span class="meta">${html(v.reason)}</span>
+        </div>`);
       });
-      ["nom-name","nom-country","nom-city","nom-reason"].forEach(id => $("#" + id).value = "");
-      renderNominations(); validateNomination(); renderBoard();
-      toast(tr("savedNom"));
     }
-
-    function renderNominations() {
-      const list = $("#nom-list");
-      const current = currentNominations();
-      list.innerHTML = current.length ? current.map(n => `<div class="nomination"><div class="nomination-head"><strong>${html(n.name)}</strong><button class="danger" data-del="${n.id}">撤回</button></div><p class="meta">${html(n.country)} · ${html(n.city)}</p><p class="sub">${html(n.reason)}</p></div>`).join("") : `<p class="sub">${state.lang === "zh" ? "暂无增补提名。" : "No saved nominations."}</p>`;
-      $$("#nom-list [data-del]").forEach(b => b.onclick = () => { state.nominations = state.nominations.filter(n => String(n.id) !== b.dataset.del); renderNominations(); renderBoard(); });
+    if (noms.length) {
+      rows.push(`<div class="audit-row"><strong>${tr("nominationDetail")}（${noms.length}）</strong></div>`);
+      noms.forEach(n => {
+        rows.push(`<div class="audit-row">
+          <strong>${html(n.name)}</strong>
+          <span class="meta">${html(n.country)} · ${html(n.city)}</span>
+          <span class="meta">${html(n.reason)}</span>
+        </div>`);
+      });
     }
+    wrap.innerHTML = rows.join("");
+  }
 
-    function currentNominations() {
-      return state.nominations.filter(n => (n.reviewCity || n.city) === state.city);
-    }
+  function sign() {
+    state.confirmOpinion = $("#final-opinion").value.trim();
+    const s = stats();
+    const pad = n => String(n).padStart(2, "0");
+    const now = new Date();
+    const ts = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    state.receipt = {
+      expert: state.expert, role: tr("roleZh")[state.role] || state.role,
+      station: $("#city-label").textContent,
+      reviewed: s.reviewed, agreed: s.agreed, adjusted: s.adjusted,
+      noms: currentNominations().length,
+      time: ts, opinion: state.confirmOpinion,
+      code: "MSL-2027-" + Math.random().toString(36).slice(2, 8).toUpperCase()
+    };
+    renderReceipt();
+    state.stage = "cert";
+    showStage("cert");
+    toast(tr("submittedToast"));
+    if (window.lucide) lucide.createIcons();
+  }
 
-    function openConfirm() {
-      if ($("#submit-board").disabled) { toast(tr("needOne")); return; }
-      showStage("confirm");
-    }
+  function renderReceipt() {
+    const r = state.receipt;
+    if (!r) return;
+    $("#receipt").innerHTML = `
+      <div class="receipt-row"><span>${tr("receiptExpert")}</span><strong>${html(r.expert)}</strong></div>
+      <div class="receipt-row"><span>${tr("receiptRole")}</span><strong>${html(r.role)}</strong></div>
+      <div class="receipt-row"><span>${tr("receiptStation")}</span><strong>${html(r.station)}</strong></div>
+      <div class="receipt-row"><span>${tr("receiptReviewed")}</span><strong>${r.reviewed}（${tr("receiptKeep")} ${r.agreed} · ${tr("receiptAdjust")} ${r.adjusted}）</strong></div>
+      <div class="receipt-row"><span>${tr("receiptNom")}</span><strong>${r.noms}</strong></div>
+      <div class="receipt-row"><span>${tr("receiptTime")}</span><strong>${r.time}</strong></div>
+      ${r.opinion ? `<div class="receipt-row"><span>${tr("receiptOpinion")}</span><strong>${html(r.opinion)}</strong></div>` : ""}
+      <div class="receipt-row"><span>${tr("receiptCode")}</span><strong>${r.code}</strong></div>`;
+    $("#thanks-note").textContent = tr("thanksNote");
+    if (window.lucide) lucide.createIcons();
+  }
 
-    function stats() {
-      const scoped = restaurants.filter(r => r.city === state.city);
-      const agreed = scoped.filter(r => state.reviews[r.id]?.status === "AGREED").length;
-      const adjusted = scoped.filter(r => state.reviews[r.id]?.status === "ADJUSTED").length;
-      return { total: scoped.length, reviewed: agreed + adjusted, agreed, adjusted, nominations: currentNominations().length };
-    }
+  function copyReceipt() {
+    const r = state.receipt;
+    const lines = [
+      `${tr("receiptExpert")}: ${r.expert}`,
+      `${tr("receiptRole")}: ${r.role}`,
+      `${tr("receiptStation")}: ${r.station}`,
+      `${tr("receiptReviewed")}: ${r.reviewed}（${tr("receiptKeep")} ${r.agreed} · ${tr("receiptAdjust")} ${r.adjusted}）`,
+      `${tr("receiptNom")}: ${r.noms}`,
+      `${tr("receiptTime")}: ${r.time}`,
+      r.opinion ? `${tr("receiptOpinion")}: ${r.opinion}` : "",
+      `${tr("receiptCode")}: ${r.code}`
+    ].filter(Boolean);
+    const text = lines.join("\n");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => toast(state.lang === "zh" ? "存根已复制到剪贴板" : "Receipt copied")).catch(() => fallbackCopy(text));
+    } else { fallbackCopy(text); }
+  }
 
-    function renderConfirm() {
-      const s = stats();
-      $("#confirm-metrics").innerHTML = `
-        <div class="review-metrics">
-          <div class="review-total"><b>${s.reviewed}</b><span>${tr("reviewedGroup")}</span></div>
-          <div class="review-breakdown">
-            <div class="review-side"><b>${s.agreed}</b><span>${tr("keepCount")}</span></div>
-            <div class="review-side"><b>${s.adjusted}</b><span>${tr("adjustCount")}</span></div>
-          </div>
-        </div>`;
-      $("#audit-title").textContent = tr("auditTitle");
-      renderAuditDetails();
-      $("#final-opinion").value = state.confirmOpinion;
-    }
+  function fallbackCopy(text) {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); toast(state.lang === "zh" ? "存根已复制到剪贴板" : "Receipt copied"); }
+    catch (e) { toast(state.lang === "zh" ? "复制失败，请手动选择" : "Copy failed"); }
+    document.body.removeChild(ta);
+  }
 
-    function renderAuditDetails() {
-      const adjustedRows = restaurants
-        .filter(r => r.city === state.city && state.reviews[r.id]?.status === "ADJUSTED")
-        .map(r => {
-          const review = state.reviews[r.id];
-          return `<div class="audit-row"><strong>${tr("adjustmentDetail")} · ${html(state.lang === "zh" ? r.nameZh : r.nameEn)}</strong><span class="meta">${ratingText[state.lang][r.rating]} → ${ratingText[state.lang][review.target]}</span><span>${html(review.reason)}</span></div>`;
-        });
-      const nominationRows = currentNominations().map(n => `<div class="audit-row"><strong>${tr("nominationDetail")} · ${html(n.name)}</strong><span class="meta">${html(n.country)} · ${html(n.city)}</span><span>${html(n.reason)}</span></div>`);
-      $("#confirm-audit").innerHTML = adjustedRows.concat(nominationRows).join("") || `<div class="audit-row"><span class="sub">${tr("auditEmpty")}</span></div>`;
-    }
+  function resetAll() {
+    state.role = null; state.expert = ""; state.stage = "login";
+    state.search = ""; state.rating = ""; state.status = "all";
+    state.reviews = {}; state.nominations = {};
+    state.decision = { restaurantId: null, status: "AGREED", target: "", reason: "" };
+    state.receipt = null; state.confirmOpinion = "";
+    $("#expert-name").value = "";
+    $$("#nom-name,#nom-country,#nom-city,#nom-reason").forEach(s => $(s) && ($(s).value = ""));
+    validateLogin(); renderRoles();
+    showStage("login");
+    render();
+  }
 
-    function sign() {
-      state.confirmOpinion = $("#final-opinion").value.trim();
-      const s = stats();
-      const ts = new Date();
-      state.receipt = {
-        expert: state.expert, role: state.role === "BOARD_MEMBER" ? tr("roleBoard") : tr("roleConsultant"),
-        city: `${cityName(state.city)} · ${countryName(state.country)}`,
-        stats: `${tr("reviewed")} ${s.reviewed}/${s.total} · ${tr("agreed")} ${s.agreed} · ${tr("adjusted")} ${s.adjusted} · ${tr("nominations")} ${s.nominations}`,
-        opinion: state.confirmOpinion || tr("noOpinion"),
-        time: `${ts.getFullYear()}-${String(ts.getMonth()+1).padStart(2,"0")}-${String(ts.getDate()).padStart(2,"0")} ${String(ts.getHours()).padStart(2,"0")}:${String(ts.getMinutes()).padStart(2,"0")}:${String(ts.getSeconds()).padStart(2,"0")}`
-      };
-      showStage("cert");
-    }
+  function openSheet(id) { $("#" + id).classList.add("open"); }
+  function closeSheet(id) { $("#" + id).classList.remove("open"); }
 
-    function renderReceipt() {
-      if (!state.receipt) return;
-      const rows = state.lang === "zh"
-        ? [["专家姓名",state.receipt.expert],["评审身份",state.receipt.role],["评审城市",state.receipt.city],["结论摘要",state.receipt.stats],["总体意见",state.receipt.opinion],["提交时间",state.receipt.time]]
-        : [["Expert",state.receipt.expert],["Role",state.receipt.role],["Station",state.receipt.city],["Summary",state.receipt.stats],["Remarks",state.receipt.opinion],["Submitted at",state.receipt.time]];
-      $("#receipt").innerHTML = rows.map(([k,v]) => `<div class="receipt-row"><span>${k}</span><strong>${html(v)}</strong></div>`).join("");
-      $("#thanks-note").textContent = tr("thanksNote");
-    }
+  function toast(text) {
+    const el = $("#toast");
+    const txt = $("#toast-text");
+    if (txt) txt.textContent = text;
+    el.classList.add("show");
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => el.classList.remove("show"), 2200);
+  }
 
-    function copyReceipt() {
-      const text = Array.from($("#receipt").querySelectorAll(".receipt-row")).map(row => row.innerText.replace(/\n/g, ": ")).join("\n");
-      if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
-      else fallbackCopy(text);
-      toast(tr("copied"));
-    }
+  function syncViewportHeight() {
+    const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    document.documentElement.style.setProperty("--app-height", h + "px");
+  }
 
-    function fallbackCopy(text) {
-      const ta = document.createElement("textarea");
-      ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
-    }
+  function init() {
+    $("#lang-login").onclick = toggleLang;
+    $("#lang-board").onclick = toggleLang;
+    $("#expert-name").oninput = validateLogin;
+    $$(".choice[data-role]").forEach(b => b.onclick = () => { state.role = b.dataset.role; renderRoles(); validateLogin(); });
+    $("#enter").onclick = enter;
 
-    function resetAll() {
-      Object.assign(state, { role: "", expert: "", stage: "login", city: "上海", continent: "ASIA", country: "CN", search: "", rating: "ALL", status: "ALL", reviews: {}, nominations: [], decision: null, receipt: null, confirmOpinion: "" });
-      $("#expert-name").value = ""; $("#search").value = ""; $("#final-opinion").value = "";
-      ["nom-name","nom-country","nom-city","nom-reason"].forEach(id => $("#" + id).value = "");
-      showStage("login"); render();
-    }
+    $("#search").oninput = e => { state.search = e.target.value; renderBoard(); };
+    $("#rating-filter").onchange = e => { state.rating = e.target.value; renderBoard(); };
+    $("#open-city").onclick = () => { renderCitySelector(); openSheet("city-sheet"); };
+    $("#city-search").oninput = e => searchCities(e.target.value);
+    $("#open-add").onclick = () => { renderNominations(); validateNomination(); openSheet("add-sheet"); };
+    ["#nom-name", "#nom-country", "#nom-city", "#nom-reason"].forEach(s => { const el = $(s); if (el) el.oninput = validateNomination; });
+    $("#save-nom").onclick = saveNomination;
+    $("#submit-board").onclick = openConfirm;
+    $("#back-board").onclick = () => { showStage("board"); state.stage = "board"; };
+    $("#final-opinion").oninput = e => { state.confirmOpinion = e.target.value; };
+    $("#final-sign").onclick = sign;
+    $("#copy-receipt").onclick = copyReceipt;
+    $("#reset").onclick = resetAll;
 
-    function openSheet(id) { $("#" + id).classList.add("open"); if (id === "city-sheet") renderCitySelector(); }
-    function closeSheet(id) { $("#" + id).classList.remove("open"); }
-    function toast(text) {
-      const el = $("#toast");
-      el.textContent = text; el.classList.add("show");
-      clearTimeout(toast.timer); toast.timer = setTimeout(() => el.classList.remove("show"), 2200);
-    }
+    $$("[data-close]").forEach(b => b.onclick = () => closeSheet(b.dataset.close));
+    $$(".overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o) o.classList.remove("open"); }));
 
-    init();
-  </script>
+    window.visualViewport && window.visualViewport.addEventListener("resize", syncViewportHeight);
+    window.addEventListener("resize", syncViewportHeight);
+    syncViewportHeight();
+
+    translateStatic();
+    renderRoles();
+    validateLogin();
+    showStage("login");
+    if (window.lucide) lucide.createIcons();
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
 </body>
 </html>
